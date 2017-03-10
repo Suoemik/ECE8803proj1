@@ -40,15 +40,6 @@
         android:layout_alignStart="@+id/editText" />
 
     <TextView
-        android:text=" Buyer Profile"
-        android:textSize="18sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView3"
-        android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/button3" />
-
-    <TextView
         android:text=" Seller Profile"
         android:textSize="18sp"
         android:layout_width="wrap_content"
@@ -56,14 +47,6 @@
         android:id="@+id/textView4"
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/button3" />
-
-    <Switch
-        android:text=""
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/switch1"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -84,5 +67,25 @@
         android:layout_marginTop="15dp"
         android:layout_below="@+id/editText2"
         android:layout_centerHorizontal="true" />
+
+    <Switch
+        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/switch1"
+        android:layout_alignBaseline="@+id/textView3"
+        android:layout_alignBottom="@+id/textView3"
+        android:layout_toStartOf="@+id/textView4"
+        android:layout_marginEnd="13dp" />
+
+    <TextView
+        android:text=" EV Driver Profile"
+        android:textSize="18sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView3"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="16dp" />
 
 </RelativeLayout>
