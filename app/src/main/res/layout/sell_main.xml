@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:text="Profile"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/button12"
+        android:textSize="12sp"
+        android:layout_width="75dp"
+        android:layout_height="35dp" />
+
+    <Button
+        android:text="Log Out"
+        android:id="@+id/button18"
+        android:textSize="12sp"
+        android:layout_width="75dp"
+        android:layout_height="35dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:text="Location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button12"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="28dp"
+        android:id="@+id/loc_txts"
+        android:textSize="20sp" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="11dp"
+        android:id="@+id/textView20"
+        android:textStyle="normal|bold"
+        android:textSize="24sp"
+        android:layout_below="@+id/loc_txts"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:text="Energy Bid Amount (kWh)"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="49dp"
+        android:id="@+id/textView21"
+        android:textSize="20sp"
+        android:layout_below="@+id/textView20"
+        android:layout_toEndOf="@+id/button12"
+        android:layout_marginStart="15dp"
+        android:textAlignment="center" />
+
+    <Button
+        android:text="0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button21"
+        android:textAppearance="@android:style/TextAppearance.Material.Small"
+        android:textSize="24sp"
+        android:textStyle="normal|bold"
+        android:background="@android:color/transparent"
+        android:layout_below="@+id/textView21"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:text="Energy Bid Price ($/kWh)"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button21"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="28dp"
+        android:id="@+id/textView22"
+        android:textSize="20sp" />
+
+    <Button
+        android:text="0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView22"
+        android:layout_alignStart="@+id/button21"
+        android:id="@+id/button23"
+        android:textAppearance="@android:style/TextAppearance.Material.Small"
+        android:fontFamily="sans-serif"
+        android:textSize="24sp"
+        android:textStyle="normal|bold"
+        android:background="@android:color/transparent" />
+
+</RelativeLayout>
