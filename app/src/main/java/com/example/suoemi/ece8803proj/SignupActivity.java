@@ -8,14 +8,15 @@ import android.widget.*;
 
 public class SignupActivity extends AppCompatActivity {
 
-    Button btn =(Button)findViewById(R.id.signup_btn);
-    Button btn2 =(Button)findViewById(R.id.login_btn);
-    Switch swi = (Switch)findViewById(R.id.signup_switch);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+
+        Button btn =(Button)findViewById(R.id.signup_btn);
+        Button btn2 =(Button)findViewById(R.id.login_btn);
+
         btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 startActivity(new Intent(SignupActivity.this, SellerProfile.class));
