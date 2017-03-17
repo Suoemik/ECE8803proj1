@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:id="@+id/textView"
-        android:layout_below="@+id/button3"
+        android:layout_below="@+id/signup_btn"
         android:layout_alignStart="@+id/editText2" />
 
     <TextView
@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/textView3"
         android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/button3" />
+        android:layout_toStartOf="@+id/signup_btn" />
 
     <TextView
         android:text=" Seller"
@@ -45,13 +45,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/textView4"
         android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/button3" />
+        android:layout_toEndOf="@+id/signup_btn" />
 
     <Switch
         android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/switch1"
+        android:id="@+id/signup_switch"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
@@ -59,7 +59,7 @@
         android:text="Log In"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/button3"
+        android:id="@+id/signup_btn"
         android:layout_marginTop="15dp"
         android:layout_below="@+id/editText2"
         android:layout_centerHorizontal="true" />
@@ -81,7 +81,7 @@
         android:id="@+id/editText"
         android:hint = "Enter Name"
         android:inputType="textPersonName"
-        android:layout_below="@+id/switch1"
+        android:layout_below="@+id/signup_switch"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="25dp" />
 

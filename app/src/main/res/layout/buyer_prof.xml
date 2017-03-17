@@ -6,9 +6,9 @@
     <Button
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:id="@+id/loc_btn"
+        android:id="@+id/bloc_btn"
         android:layout_marginTop="38dp"
-        android:layout_below="@+id/tele_btn"
+        android:layout_below="@+id/bphone_btn"
         android:layout_alignParentStart="true" />
 
     <TextView
@@ -17,37 +17,37 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
         android:id="@+id/textView14"
-        android:layout_below="@+id/tele_btn"
+        android:layout_below="@+id/bphone_btn"
         android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:id="@+id/tele_btn"
+        android:id="@+id/bphone_btn"
         android:layout_marginTop="29dp"
-        android:layout_below="@+id/button2"
+        android:layout_below="@+id/bpass_btn"
         android:layout_alignParentStart="true" />
 
     <TextView
         android:text="Phone Number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button2"
+        android:layout_below="@+id/bpass_btn"
         android:layout_marginTop="17dp"
         android:id="@+id/textView13" />
 
     <Button
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:id="@+id/button2"
-        android:layout_below="@+id/button4"
+        android:id="@+id/bpass_btn"
+        android:layout_below="@+id/busern_btn"
         android:layout_alignParentStart="true"
         android:layout_marginTop="32dp" />
 
     <Button
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:id="@+id/button4"
+        android:id="@+id/busern_btn"
         android:layout_below="@+id/textView10"
         android:layout_alignParentStart="true" />
 
@@ -55,7 +55,7 @@
         android:text="Password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button4"
+        android:layout_below="@+id/busern_btn"
         android:layout_alignEnd="@+id/textView10"
         android:layout_marginTop="18dp"
         android:id="@+id/textView11" />
@@ -65,7 +65,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/df_pyment_btn"
         android:layout_marginTop="39dp"
-        android:layout_below="@+id/loc_btn"
+        android:layout_below="@+id/bloc_btn"
         android:layout_alignParentStart="true" />
 
     <TextView
@@ -73,7 +73,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView12"
-        android:layout_below="@+id/loc_btn"
+        android:layout_below="@+id/bloc_btn"
         android:layout_alignStart="@+id/textView11"
         android:layout_marginTop="26dp" />
 
