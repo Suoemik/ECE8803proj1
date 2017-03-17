@@ -19,7 +19,7 @@ public class SignupActivity extends AppCompatActivity {
 
         btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                startActivity(new Intent(SignupActivity.this, SellerProfile.class));
+                startActivity(new Intent(SignupActivity.this, BuyerMain.class));
             }
         });
         btn2.setOnClickListener(new View.OnClickListener() {

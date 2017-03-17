@@ -58,7 +58,7 @@
         android:text="0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/button21"
+        android:id="@+id/energybid_btn"
         android:textAppearance="@android:style/TextAppearance.Material.Small"
         android:textSize="24sp"
         android:textStyle="normal|bold"
@@ -70,7 +70,7 @@
         android:text="Energy Bid Price ($/kWh)"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button21"
+        android:layout_below="@+id/energybid_btn"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="28dp"
         android:id="@+id/textView22"
@@ -81,8 +81,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView22"
-        android:layout_alignStart="@+id/button21"
-        android:id="@+id/button23"
+        android:layout_alignStart="@+id/energybid_btn"
+        android:id="@+id/energyprice_btn"
         android:textAppearance="@android:style/TextAppearance.Material.Small"
         android:fontFamily="sans-serif"
         android:textSize="24sp"
@@ -95,7 +95,8 @@
         android:layout_marginTop="13dp"
         android:id="@+id/switch3"
         android:text="Seller Mobility "
-        android:layout_below="@+id/button23"
-        android:layout_centerHorizontal="true" />
+        android:layout_below="@+id/energyprice_btn"
+        android:layout_centerHorizontal="true"
+        android:textSize="20sp" />
 
 </RelativeLayout>
