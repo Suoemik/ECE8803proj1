@@ -20,7 +20,8 @@
         android:id="@+id/button8"
         android:layout_alignBaseline="@+id/button7"
         android:layout_alignBottom="@+id/button7"
-        android:layout_alignEnd="@+id/paymenttext" />
+        android:layout_alignEnd="@+id/paymenttext"
+        android:background="@color/colorAccent"/>
 
     <Button
         android:text="OK"
@@ -29,6 +30,7 @@
         android:layout_marginTop="41dp"
         android:id="@+id/button7"
         android:layout_below="@+id/paymenttext"
-        android:layout_alignStart="@+id/paymenttext" />
+        android:layout_alignStart="@+id/paymenttext"
+        android:background="@color/colorAccent"/>
 
 </RelativeLayout>

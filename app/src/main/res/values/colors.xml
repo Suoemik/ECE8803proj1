@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#1b8e43</color>
     <color name="colorPrimaryDark">#026018</color>
-    <color name="colorAccent">#25ec7f</color>
+    <color name="colorAccent">#43a770</color>
     <color name="colorBoxLayer">#FFFEFFFE</color>
     <color name="colorMainTextView">#FF1F201F</color>
 </resources>

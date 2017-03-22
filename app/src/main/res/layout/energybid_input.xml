@@ -9,7 +9,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/textView2"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="30dp"/>
 
     <EditText
         android:layout_width="match_parent"
@@ -19,7 +21,8 @@
         android:id="@+id/editText5"
         android:hint="Enter amount"
         android:layout_below="@+id/textView2"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="18dp"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -28,7 +31,8 @@
         android:text="Energy Bid Price ($/kWh)"
         android:layout_below="@+id/editText5"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="29dp" />
+        android:layout_marginTop="29dp"
+        android:layout_marginStart="18dp"/>
 
     <EditText
         android:layout_width="match_parent"
@@ -36,9 +40,10 @@
         android:inputType="textPersonName"
         android:ems="10"
         android:id="@+id/editText6"
-        android:hint="Entter price"
+        android:hint="Enter price"
         android:layout_below="@+id/textView5"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="28dp"/>
 
     <Button
         android:text="OK"
@@ -47,5 +52,6 @@
         android:layout_below="@+id/editText6"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="17dp"
-        android:id="@+id/energybidOKbtn" />
+        android:id="@+id/energybidOKbtn"
+        android:background="@color/colorAccent"/>
 </RelativeLayout>

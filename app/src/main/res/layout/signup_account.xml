@@ -21,7 +21,8 @@
         android:layout_alignBaseline="@+id/button9"
         android:layout_alignBottom="@+id/button9"
         android:layout_alignStart="@+id/paymenttext"
-        android:layout_marginStart="87dp" />
+        android:layout_marginStart="87dp"
+        android:background="@color/colorAccent"/>
 
     <Button
         android:text="Ok"
@@ -31,6 +32,7 @@
         android:id="@+id/button9"
         android:layout_marginEnd="89dp"
         android:layout_below="@+id/paymenttext"
-        android:layout_alignEnd="@+id/paymenttext" />
+        android:layout_alignEnd="@+id/paymenttext"
+        android:background="@color/colorAccent"/>
 
 </RelativeLayout>

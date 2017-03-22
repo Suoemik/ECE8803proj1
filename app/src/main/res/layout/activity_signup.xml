@@ -37,7 +37,8 @@
         android:id="@+id/signup_btn"
         android:layout_marginTop="15dp"
         android:layout_below="@+id/editText2"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:background="@color/colorAccent"/>
 
     <Switch
         android:text=""
