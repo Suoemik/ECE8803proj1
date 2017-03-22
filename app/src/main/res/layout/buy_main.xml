@@ -4,13 +4,13 @@
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <Button
-        android:text="Profile"
+        android:text="Settings"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:id="@+id/button10"
+        android:id="@+id/buysett_btn"
         android:textSize="12sp"
-        android:layout_width="75dp"
-        android:layout_height="35dp" />
+        android:layout_height="35dp"
+        android:layout_width="85dp" />
 
     <Button
         android:text="Log Out"
@@ -29,13 +29,13 @@
         android:layout_width="wrap_content"
         android:layout_marginTop="50dp"
         android:layout_below="@+id/textView15"
-        android:layout_toEndOf="@+id/button10" />
+        android:layout_toEndOf="@+id/buysett_btn" />
 
     <Button
         android:text="0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/button14"
+        android:id="@+id/energyreq_btn"
         android:textAppearance="@android:style/TextAppearance.Material.Small"
         android:textSize="24sp"
         android:background="@android:color/transparent"
@@ -64,7 +64,7 @@
         android:id="@+id/begin_btn"
         android:textSize="30sp"
         android:textAlignment="center"
-        android:layout_below="@+id/button14"
+        android:layout_below="@+id/energyreq_btn"
         android:layout_alignStart="@+id/textView15" />
 
     <TextView
@@ -75,7 +75,7 @@
         android:layout_width="wrap_content"
         android:textSize="20sp"
         android:textAlignment="center"
-        android:layout_below="@+id/button10"
+        android:layout_below="@+id/buysett_btn"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

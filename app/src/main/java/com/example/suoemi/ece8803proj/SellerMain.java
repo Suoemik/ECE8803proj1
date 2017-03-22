@@ -7,7 +7,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RemoteViews;
 import android.widget.Toast;
+import com.example.suoemi.ece8803proj.SellerInput;
+
+import static com.example.suoemi.ece8803proj.SellerInput.selleramt;
+import static com.example.suoemi.ece8803proj.SellerInput.sellerprice;
 
 /**
  * Created by Suoemi on 3/17/2017.
@@ -19,29 +24,92 @@ public class SellerMain extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sell_main);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder
-                .setTitle("There is a new auction within you vicinity. Accept?")
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        //Yes button clicked, do something
-                        AlertDialog.Builder builder2 = new AlertDialog.Builder(SellerMain.this);
-                        builder2
-                                .setTitle("Would you like to change your energy bid data?")
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        Toast.makeText(SellerMain.this, "Yes button pressed",
-                                                Toast.LENGTH_SHORT).show();
-                                        startActivity(new Intent(SellerMain.this, SellerInput.class));
-                                    }
-                                })
-                                .setNegativeButton("No", null)						//Do nothing on no
-                                .show();
-                    }
-                })
-                .setNegativeButton("No", null)						//Do nothing on no
-                .show();
+        Intent mIntent = getIntent();
+        String prevAct = mIntent.getStringExtra("FROM_ACTIVITY");
+
+        if(prevAct.equals("BuyerMain")) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder
+                    .setTitle("Would you like to participate in this energy auction?")
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            //Yes button clicked, do something
+                            Button btn = (Button) findViewById(R.id.energybid_btn);
+                            Button btn2 = (Button) findViewById(R.id.energybid_btn);
+                            if (btn.getText().toString().equals("0") || btn2.getText().toString().equals("0")) {
+                                AlertDialog.Builder builder2 = new AlertDialog.Builder(SellerMain.this);
+                                builder2
+                                        .setTitle("One or more of your input data is 0")
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .setPositiveButton("Increase", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                startActivity(new Intent(SellerMain.this, SellerInput.class));
+                                            }
+                                        })
+                                        .setNegativeButton("Accept", null)                        //Do nothing on no
+                                        .show();
+                            } else {
+                                AlertDialog.Builder builder2_0 = new AlertDialog.Builder(SellerMain.this);
+                                builder2_0
+                                        .setTitle("Would you like to change current bidding data?")
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Toast.makeText(SellerMain.this, "Yes button pressed",
+                                                        Toast.LENGTH_SHORT).show();
+                                                startActivity(new Intent(SellerMain.this, SellerInput.class));
+                                            }
+                                        })
+                                        .setNegativeButton("No", null)                        //Do nothing on no
+                                        .show();
+                            }
+                        }
+                    })
+                    .setNegativeButton("No", null)                        //Do nothing on no
+                    .show();
+        }
+        else if(prevAct.equals("SellerInput"))
+        {
+            RemoteViews remoteV = new RemoteViews(getPackageName(), R.layout.sell_main);
+            Button btn = (Button)findViewById(R.id.energybid_btn);
+            Button btn2 = (Button)findViewById(R.id.energyprice_btn);
+
+            btn.setText(selleramt);
+            btn2.setText(sellerprice);
+
+            btn.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent mIntent = new Intent(SellerMain.this, SellerInput.class);
+                    startActivity(mIntent);
+                }
+            });
+
+            btn2.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent mIntent = new Intent(SellerMain.this, SellerInput.class);
+                    startActivity(mIntent);
+                }
+            });
+        }
+        else {
+            Button btn = (Button)findViewById(R.id.energybid_btn);
+            Button btn2 = (Button)findViewById(R.id.energyprice_btn);
+
+            btn.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent mIntent = new Intent(SellerMain.this, SellerInput.class);
+                    startActivity(mIntent);
+                }
+            });
+
+            btn2.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent mIntent = new Intent(SellerMain.this, SellerInput.class);
+                    startActivity(mIntent);
+                }
+            });
+        }
+
     }
 }
