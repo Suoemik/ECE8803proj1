@@ -21,13 +21,24 @@ public class SellerMain extends AppCompatActivity {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder
-                .setTitle("Would you like to update Energy Bid Values?")
+                .setTitle("There is a new auction within you vicinity. Accept?")
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         //Yes button clicked, do something
-                        Toast.makeText(SellerMain.this, "Yes button pressed",
-                                Toast.LENGTH_SHORT).show();
+                        AlertDialog.Builder builder2 = new AlertDialog.Builder(SellerMain.this);
+                        builder2
+                                .setTitle("Would you like to change your energy bid data?")
+                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Toast.makeText(SellerMain.this, "Yes button pressed",
+                                                Toast.LENGTH_SHORT).show();
+                                        startActivity(new Intent(SellerMain.this, SellerInput.class));
+                                    }
+                                })
+                                .setNegativeButton("No", null)						//Do nothing on no
+                                .show();
                     }
                 })
                 .setNegativeButton("No", null)						//Do nothing on no

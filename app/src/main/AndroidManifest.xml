@@ -27,6 +27,9 @@
         <activity
             android:name=".SellerProfile">
         </activity>
+        <activity
+            android:name=".SellerInput">
+        </activity>
     </application>
 
 </manifest>
