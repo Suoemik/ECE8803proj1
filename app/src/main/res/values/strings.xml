@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">ECE8803proj</string>
+    <string name="add_button">ADD</string>
+    <string name="account_details">Account Details</string>
+    <string name="log_in">Log In</string>
+    <string name="sign_up">Sign Up Here</string>
+    <string name="driver">EV Driver</string>
+    <string name="seller">Seller</string>
+    <string name="no_account">Don't have an account?</string>
+    <string name="password">Password</string>
+    <string name="name">Enter Name</string>
 </resources>
