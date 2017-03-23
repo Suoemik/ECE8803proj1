@@ -36,7 +36,7 @@
         android:inputType="textPersonName"
         android:ems="10"
         android:id="@+id/editTextsellerprice"
-        android:hint="Entter price"
+        android:hint="Enter price"
         android:layout_below="@+id/textView5"
         android:layout_centerHorizontal="true" />
 

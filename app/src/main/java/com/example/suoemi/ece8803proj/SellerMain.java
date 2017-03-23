@@ -37,6 +37,9 @@ public class SellerMain extends AppCompatActivity {
                             //Yes button clicked, do something
                             Button btn = (Button) findViewById(R.id.energybid_btn);
                             Button btn2 = (Button) findViewById(R.id.energybid_btn);
+                            Button btn3 = (Button) findViewById(R.id.selsett_btn);
+                            Button btn4 = (Button) findViewById(R.id.logout_btn);
+
                             if (btn.getText().toString().equals("0") || btn2.getText().toString().equals("0")) {
                                 AlertDialog.Builder builder2 = new AlertDialog.Builder(SellerMain.this);
                                 builder2
@@ -74,6 +77,8 @@ public class SellerMain extends AppCompatActivity {
             RemoteViews remoteV = new RemoteViews(getPackageName(), R.layout.sell_main);
             Button btn = (Button)findViewById(R.id.energybid_btn);
             Button btn2 = (Button)findViewById(R.id.energyprice_btn);
+            Button btn3 = (Button) findViewById(R.id.selsett_btn);
+            Button btn4 = (Button) findViewById(R.id.logout_btn);
 
             btn.setText(selleramt);
             btn2.setText(sellerprice);
@@ -91,10 +96,26 @@ public class SellerMain extends AppCompatActivity {
                     startActivity(mIntent);
                 }
             });
+
+            btn3.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent mIntent = new Intent(SellerMain.this, SellerProfile.class);
+                    startActivity(mIntent);
+                }
+            });
+
+            btn4.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent mIntent = new Intent(SellerMain.this, LoginActivity.class);
+                    startActivity(mIntent);
+                }
+            });
         }
         else {
             Button btn = (Button)findViewById(R.id.energybid_btn);
             Button btn2 = (Button)findViewById(R.id.energyprice_btn);
+            Button btn3 = (Button) findViewById(R.id.selsett_btn);
+            Button btn4 = (Button) findViewById(R.id.logout_btn);
 
             btn.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -105,10 +126,25 @@ public class SellerMain extends AppCompatActivity {
 
             btn2.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    Intent mIntent = new Intent(SellerMain.this, SellerInput.class);
+                    Intent mIntent = new Intent(SellerMain.this, SellerProfile.class);
                     startActivity(mIntent);
                 }
             });
+
+            btn3.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent mIntent = new Intent(SellerMain.this, SellerProfile.class);
+                    startActivity(mIntent);
+                }
+            });
+
+            btn4.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent mIntent = new Intent(SellerMain.this, LoginActivity.class);
+                    startActivity(mIntent);
+                }
+            });
+
         }
 
     }

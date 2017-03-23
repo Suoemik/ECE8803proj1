@@ -96,7 +96,7 @@
 
     <Button
         android:text="Log out"
-        android:id="@+id/button2"
+        android:id="@+id/bplogout_btn"
         android:layout_alignParentBottom="true"
         android:layout_alignStart="@+id/textView12"
         android:textAppearance="@android:style/TextAppearance.Material.Small"
