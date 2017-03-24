@@ -21,31 +21,12 @@
         android:layout_below="@+id/textView2"
         android:layout_alignParentStart="true" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView5"
-        android:text="Energy Bid Price ($/kWh)"
-        android:layout_below="@+id/editTextenergyreq"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="29dp" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:id="@+id/editTextenergyprice"
-        android:hint="Enter price"
-        android:layout_below="@+id/textView5"
-        android:layout_centerHorizontal="true" />
-
     <Button
         android:text="OK"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editTextenergyprice"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="17dp"
-        android:id="@+id/energybidOKbtn" />
+        android:layout_marginTop="31dp"
+        android:id="@+id/energyreqOKbtn"
+        android:layout_below="@+id/editTextenergyreq"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

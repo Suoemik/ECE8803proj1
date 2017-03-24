@@ -44,7 +44,7 @@
         android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/signup_switch"
+        android:id="@+id/login_switch"
         android:layout_alignBaseline="@+id/textView3"
         android:layout_alignBottom="@+id/textView3"
         android:layout_toStartOf="@+id/textView4"
@@ -66,9 +66,9 @@
         android:inputType="textPersonName"
         android:ems="10"
         android:id="@+id/editText"
-        android:hint = "@string/name"
+        android:hint = "Enter Name"
         android:layout_marginTop="76dp"
-        android:layout_below="@+id/signup_switch"
+        android:layout_below="@+id/login_switch"
         android:layout_centerHorizontal="true" />
 
     <EditText
@@ -79,7 +79,7 @@
         android:id="@+id/editText4"
         android:hint="Enter Phone Number"
         android:layout_marginTop="30dp"
-        android:layout_below="@+id/signup_switch"
+        android:layout_below="@+id/login_switch"
         android:layout_alignStart="@+id/editText" />
 
     <Button
@@ -100,6 +100,6 @@
         android:layout_marginTop="31dp"
         android:id="@+id/textView"
         android:layout_below="@+id/signup_btn"
-        android:layout_alignEnd="@+id/signup_switch" />
+        android:layout_alignEnd="@+id/login_switch" />
 
 </RelativeLayout>

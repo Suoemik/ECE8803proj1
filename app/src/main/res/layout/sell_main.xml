@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFF2FEFF">
@@ -44,14 +45,13 @@
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:text="0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/energybid_btn"
         android:textAppearance="@android:style/TextAppearance.Material.Small"
         android:textSize="24sp"
         android:textStyle="normal|bold"
-        android:background="@android:color/transparent"
+        android:background="?attr/colorBackgroundFloating"
         android:layout_below="@+id/textView21"
         android:layout_centerHorizontal="true" />
 
@@ -66,7 +66,6 @@
         android:textSize="20sp" />
 
     <Button
-        android:text="0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView22"
@@ -76,7 +75,7 @@
         android:fontFamily="sans-serif"
         android:textSize="24sp"
         android:textStyle="normal|bold"
-        android:background="@android:color/transparent" />
+        android:background="?attr/colorBackgroundFloating" />
 
     <Switch
         android:layout_width="wrap_content"

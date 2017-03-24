@@ -11,7 +11,7 @@
     tools:context="com.example.suoemi.ece8803proj.PaymentInput">
 
     <Button
-        android:text="@string/add_button"
+        android:text="Add"
         android:layout_width="151dp"
         android:layout_height="wrap_content"
         android:id="@+id/add"
@@ -35,16 +35,7 @@
             android:orientation="vertical" />
     </HorizontalScrollView>
 
-    <TextView
-        android:text="@string/account_details"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView3"
-        android:layout_marginTop="55dp"
-        android:layout_marginStart="100dp"
-        tools:textSize="25sp"
-        tools:textColor="#FF1F201F"/>
-        //tools:textStyle="bold"
+    //tools:textStyle="bold"
 
     <EditText
         android:layout_width="wrap_content"
@@ -77,7 +68,7 @@
         android:layout_height="wrap_content"
         android:inputType="number"
         android:ems="10"
-        android:id="@+id/editText9"
+        android:id="@+id/Enter_mnth"
         android:layout_marginTop="204dp"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="330dp"
@@ -104,7 +95,7 @@
         android:layout_height="60dp"
         android:inputType="number"
         android:ems="10"
-        android:id="@+id/editText9"
+        android:id="@+id/Enter_year"
         android:layout_marginTop="198dp"
         android:layout_marginStart="140dp"
         android:layout_marginEnd="120dp"
@@ -130,7 +121,7 @@
         android:layout_height="wrap_content"
         android:inputType="number"
         android:ems="10"
-        android:id="@+id/CVV"
+        android:id="@+id/CVV_text"
         android:layout_marginTop="204dp"
         android:layout_marginStart="270dp"
         tools:textSize="20sp"
@@ -154,7 +145,7 @@
         android:layout_height="wrap_content"
         android:inputType="number"
         android:ems="10"
-        android:id="@+id/editText9"
+        android:id="@+id/Zipcode"
         android:layout_marginTop="290dp"
         android:layout_marginStart="250dp"
         tools:textSize="20sp"
@@ -182,6 +173,17 @@
         android:layout_marginStart="35dp"
         tools:textSize="20sp"
         tools:textColor="#hefefe"/>
+
+    <TextView
+        android:text="ACCOUNT DETAILS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView4"
+        android:layout_marginTop="48dp"
+        tools:textSize="25sp"
+        tools:textColor="#FF1F201F"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
     //tools:textStyle="bold"
 
 </RelativeLayout>

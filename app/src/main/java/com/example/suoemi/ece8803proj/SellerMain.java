@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RemoteViews;
 import android.widget.Toast;
-import com.example.suoemi.ece8803proj.SellerInput;
 
 import static com.example.suoemi.ece8803proj.SellerInput.selleramt;
 import static com.example.suoemi.ece8803proj.SellerInput.sellerprice;
@@ -40,7 +39,7 @@ public class SellerMain extends AppCompatActivity {
                             Button btn3 = (Button) findViewById(R.id.selsett_btn);
                             Button btn4 = (Button) findViewById(R.id.logout_btn);
 
-                            if (btn.getText().toString().equals("0") || btn2.getText().toString().equals("0")) {
+                            if (btn.getText().toString().equals("") || btn2.getText().toString().equals("")) {
                                 AlertDialog.Builder builder2 = new AlertDialog.Builder(SellerMain.this);
                                 builder2
                                         .setTitle("One or more of your input data is 0")

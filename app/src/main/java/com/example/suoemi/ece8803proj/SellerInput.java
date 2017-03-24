@@ -32,11 +32,11 @@ public class SellerInput extends AppCompatActivity {
         savedprice = getSharedPreferences("price", MODE_PRIVATE);
 
         btn =(Button)findViewById(R.id.energybidOKbtn);
-        selleramttxt = (EditText)findViewById(R.id.editTextselleramnt);
-        sellerpricetxt = (EditText)findViewById(R.id.editTextselleramnt);
+        selleramttxt = (EditText)findViewById(R.id.editTextenergyreq);
+        sellerpricetxt = (EditText)findViewById(R.id.editTextenergyprice);
 
-        selleramttxt.setText(savedamt.getString("selleramt", "0"));
-        sellerpricetxt.setText(savedprice.getString("sellerprice", "0"));
+        selleramttxt.setText(savedamt.getString("selleramt", selleramt));
+        sellerpricetxt.setText(savedprice.getString("sellerprice", sellerprice));
 
         btn.setOnClickListener(saveButtonListener);
     }

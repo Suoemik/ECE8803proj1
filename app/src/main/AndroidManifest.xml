@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.suoemi.ece8803proj">
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -21,6 +22,8 @@
         <activity android:name=".SellerProfile"></activity>
         <activity android:name=".SellerInput"></activity>
         <activity android:name=".PaymentInput"></activity>
+        <activity android:name=".BuyerInput"></activity>
+
     </application>
 
 </manifest>

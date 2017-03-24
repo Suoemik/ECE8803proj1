@@ -19,6 +19,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
+import static com.example.suoemi.ece8803proj.BuyerInput.buyeramt;
+
 /**
  * Created by Suoemi on 3/17/2017.
  */
@@ -38,6 +40,8 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
         setContentView(R.layout.buy_main);
 
         Button btn = (Button) findViewById(R.id.begin_btn);
+        Button btn2 = (Button) findViewById(R.id.energyreq_btn);
+
         mResultReceiver = new AddressResultReceiver(new Handler());
         mFetchAddressButton = (Button) findViewById(R.id.benterloc);
 
@@ -51,6 +55,15 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
                 startActivity(mIntent);
             }
         });
+
+        btn2.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v) {
+                Intent mIntent = new Intent(BuyerMain.this, BuyerInput.class);
+                mIntent.putExtra("FROM_ACTIVITY", "BuyerMain");
+                startActivity(mIntent);
+            }
+        });
+        btn2.setText(buyeramt);
 
         buildGoogleApiClient();
     }
