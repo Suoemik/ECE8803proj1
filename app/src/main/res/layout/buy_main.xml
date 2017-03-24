@@ -82,6 +82,7 @@
         android:textSize="30sp"
         android:textAlignment="center"
         android:layout_below="@+id/energyreq_btn"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:background="@color/colorAccent"/>
 
 </RelativeLayout>
