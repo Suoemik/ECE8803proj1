@@ -1,9 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:background="#FFF2FEFF">
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <Button
+        android:layout_height="wrap_content"
+        android:id="@+id/sloc_btn"
+        android:layout_marginTop="38dp"
+        android:layout_below="@+id/bphone_btn"
+        android:layout_alignParentStart="true"
+        android:layout_width="400dp"
+        android:text="OFF" />
+
+    <TextView
+        android:text="Location Services"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:id="@+id/textView14"
+        android:layout_below="@+id/bphone_btn"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_height="wrap_content"
+        android:id="@+id/bphone_btn"
+        android:layout_marginTop="29dp"
+        android:layout_below="@+id/bpass_btn"
+        android:layout_alignParentStart="true"
+        android:layout_width="400dp" />
+
+    <TextView
+        android:text="Phone Number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bpass_btn"
+        android:layout_marginTop="17dp"
+        android:id="@+id/textView13" />
+
+    <Button
+        android:layout_height="wrap_content"
+        android:id="@+id/bpass_btn"
+        android:layout_below="@+id/busern_btn"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="32dp"
+        android:layout_width="400dp" />
+
+    <Button
+        android:layout_height="wrap_content"
+        android:id="@+id/busern_btn"
+        android:layout_below="@+id/textView10"
+        android:layout_alignParentStart="true"
+        android:layout_width="400dp" />
+
+    <TextView
+        android:text="Password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/busern_btn"
+        android:layout_alignEnd="@+id/textView10"
+        android:layout_marginTop="18dp"
+        android:id="@+id/textView11" />
+
+    <Button
+        android:layout_height="wrap_content"
+        android:id="@+id/df_pyment_btn"
+        android:layout_marginTop="39dp"
+        android:layout_below="@+id/sloc_btn"
+        android:layout_alignParentStart="true"
+        android:layout_width="400dp" />
+
+    <TextView
+        android:text="Default Payment Method"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView12"
+        android:layout_below="@+id/sloc_btn"
+        android:layout_alignStart="@+id/textView11"
+        android:layout_marginTop="26dp" />
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -22,100 +95,23 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
 
-
-    <ImageButton
-        android:layout_width="70dp"
-        android:layout_height="60dp"
-        app:srcCompat="@drawable/home_icon"
-        android:id="@+id/imageButton2"
-        android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/button"
-        android:layout_marginEnd="5dp"
-        android:layout_marginStart="300dp"
-        android:layout_marginTop="5dp"
-        android:background=""/>
-
     <Button
-        android:layout_height="wrap_content"
-        android:id="@+id/busern_btn"
-        android:layout_width="400dp"
-        android:layout_below="@+id/textView10"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:text="Password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView11"
-        android:layout_below="@+id/busern_btn"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="13dp" />
-
-    <Button
-        android:layout_height="wrap_content"
-        android:id="@+id/bpass_btn"
-        android:layout_width="400dp"
-        android:layout_below="@+id/textView11"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:text="Phone Number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="11dp"
-        android:id="@+id/textView13"
-        android:layout_below="@+id/bpass_btn"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:layout_height="wrap_content"
-        android:id="@+id/bphone_btn"
-        android:layout_width="400dp"
-        android:layout_below="@+id/textView13"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:text="Location Services"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:id="@+id/textView14"
-        android:layout_below="@+id/bphone_btn"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:layout_height="wrap_content"
-        android:id="@+id/bloc_btn"
-        android:layout_width="400dp"
-        android:layout_below="@+id/textView14"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:text="Default Payment Method"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView12"
-        android:layout_marginTop="12dp"
-        android:layout_below="@+id/bloc_btn"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:layout_height="wrap_content"
-        android:id="@+id/df_pyment_btn"
-        android:layout_width="400dp"
-        android:layout_below="@+id/textView12"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:text="LOG OUT"
-        android:id="@+id/button2"
-        android:textAppearance="@android:style/TextAppearance.Material.Small"
-        android:textSize="20sp"
+        android:text="Log out"
+        android:id="@+id/bplogout_btn"
+        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
         android:layout_height="35dp"
-        android:layout_width="400dp"
+        android:layout_width="150dp"
         android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@+id/textView14"
-        android:layout_marginRight="110dp"
-        android:background="@color/colorAccent"/>
+        android:layout_alignParentEnd="true"
+        android:fontFamily="sans-serif-medium" />
+
+    <Button
+        android:text="Main"
+        android:layout_width="150dp"
+        android:layout_height="35dp"
+        android:id="@+id/bpmain_btn"
+        android:layout_alignTop="@+id/bplogout_btn"
+        android:layout_alignStart="@+id/textView12"
+        android:fontFamily="sans-serif-medium" />
 
 </RelativeLayout>

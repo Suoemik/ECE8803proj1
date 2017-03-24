@@ -1,12 +1,7 @@
 <resources>
     <string name="app_name">ECE8803proj</string>
-    <string name="add_button">ADD</string>
-    <string name="account_details">Account Details</string>
-    <string name="log_in">Log In</string>
-    <string name="sign_up">Sign Up Here</string>
-    <string name="driver">EV Driver</string>
-    <string name="seller">Seller</string>
-    <string name="no_account">Don't have an account?</string>
-    <string name="password">Password</string>
-    <string name="name">Enter Name</string>
+    <string name="service_not_available">Service Not Available</string>
+    <string name="invalid_lat_long_used">Invalid Latitude or Longitude used</string>
+    <string name="no_address_found">No Adress Found</string>
+    <string name="address_found">Address Found</string>
 </resources>
