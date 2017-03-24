@@ -5,17 +5,17 @@
     android:background="#FFF2FEFF">
 
     <Button
-        android:text="Profile"
+        android:text="Settings"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:id="@+id/button12"
+        android:id="@+id/selsett_btn"
         android:textSize="12sp"
-        android:layout_width="75dp"
-        android:layout_height="35dp" />
+        android:layout_height="35dp"
+        android:layout_width="85dp" />
 
     <Button
         android:text="Log Out"
-        android:id="@+id/button18"
+        android:id="@+id/logout_btn"
         android:textSize="12sp"
         android:layout_width="75dp"
         android:layout_height="35dp"
@@ -26,7 +26,7 @@
         android:text="Location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button12"
+        android:layout_below="@+id/selsett_btn"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="28dp"
         android:id="@+id/loc_txts"
@@ -42,18 +42,6 @@
         android:textSize="24sp"
         android:layout_below="@+id/loc_txts"
         android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:text="Energy Bid Amount (kWh)"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="49dp"
-        android:id="@+id/textView21"
-        android:textSize="20sp"
-        android:layout_below="@+id/textView20"
-        android:layout_toEndOf="@+id/button12"
-        android:layout_marginStart="15dp"
-        android:textAlignment="center" />
 
     <Button
         android:text="0"
@@ -99,5 +87,16 @@
         android:layout_below="@+id/energyprice_btn"
         android:layout_centerHorizontal="true"
         android:textSize="20sp" />
+
+    <TextView
+        android:text="Energy Bid Amount (kWh)"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="49dp"
+        android:id="@+id/textView21"
+        android:textSize="20sp"
+        android:textAlignment="center"
+        android:layout_below="@+id/textView20"
+        android:layout_alignStart="@+id/textView22" />
 
 </RelativeLayout>

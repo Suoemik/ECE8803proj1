@@ -5,12 +5,22 @@
     android:background="#FFF2FEFF">
 
     <Button
-        android:layout_width="200dp"
+        android:text="Log out"
+        android:id="@+id/splogout_btn"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/textView12"
+        android:textAppearance="@android:style/TextAppearance.Material.Small"
+        android:textSize="12sp"
+        android:layout_height="35dp"
+        android:layout_width="400dp" />
+
+    <Button
         android:layout_height="wrap_content"
         android:id="@+id/bloc_btn"
         android:layout_marginTop="38dp"
         android:layout_below="@+id/bphone_btn"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_width="400dp" />
 
     <TextView
         android:text="Location Services"
@@ -22,12 +32,12 @@
         android:layout_alignParentStart="true" />
 
     <Button
-        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:id="@+id/bphone_btn"
         android:layout_marginTop="29dp"
         android:layout_below="@+id/bpass_btn"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_width="400dp" />
 
     <TextView
         android:text=" Phone Number"
@@ -38,19 +48,19 @@
         android:id="@+id/textView13" />
 
     <Button
-        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:id="@+id/bpass_btn"
         android:layout_below="@+id/busern_btn"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="32dp" />
+        android:layout_marginTop="32dp"
+        android:layout_width="400dp" />
 
     <Button
-        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:id="@+id/busern_btn"
         android:layout_below="@+id/textView10"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_width="400dp" />
 
     <TextView
         android:text="Password"
@@ -62,12 +72,12 @@
         android:id="@+id/textView11" />
 
     <Button
-        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:id="@+id/df_pyment_btn"
         android:layout_marginTop="39dp"
         android:layout_below="@+id/bloc_btn"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_width="400dp" />
 
     <TextView
         android:text="Default Account"

@@ -20,7 +20,9 @@ public class BuyerMain extends AppCompatActivity {
 
         btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                startActivity(new Intent(BuyerMain.this, SellerMain.class));
+                Intent mIntent = new Intent(BuyerMain.this, SellerMain.class);
+                mIntent.putExtra("FROM_ACTIVITY", "BuyerMain");
+                startActivity(mIntent);
             }
         });
     }
