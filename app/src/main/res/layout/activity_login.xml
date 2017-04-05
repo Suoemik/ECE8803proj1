@@ -12,58 +12,31 @@
     android:background="#FFF2FEFF">
 
     <Button
-        android:text="Log In here"
+        android:text="Sign up here"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/signup_btn2"
         android:textAppearance="@android:style/TextAppearance.Material.Small"
         android:layout_alignBaseline="@+id/textView"
         android:layout_alignBottom="@+id/textView"
         android:layout_toEndOf="@+id/textView"
-        android:background="@android:color/transparent" />
-
-    <TextView
-        android:text="Don't have an account?"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:id="@+id/textView"
-        android:layout_below="@+id/signup_btn"
-        android:layout_alignStart="@+id/editText2" />
-
-    <TextView
-        android:text="EV Driver"
-        android:textSize="18sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView3"
-        android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/signup_btn" />
-
-    <TextView
-        android:text="Seller"
-        android:textSize="18sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView4"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/signup_btn" />
+        android:background="@android:color/transparent"
+        android:id="@+id/signup_btn2" />
 
     <Switch
         android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/login_switch"
+        android:id="@+id/signup_switch"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"/>
 
     <Button
         android:text="Log In"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/signup_btn"
+        android:id="@+id/login_btn"
         android:layout_marginTop="15dp"
-        android:layout_below="@+id/editText2"
+        android:layout_below="@+id/inputpass"
         android:layout_centerHorizontal="true"
         android:background="@color/colorAccent"/>
 
@@ -72,20 +45,49 @@
         android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:ems="10"
-        android:id="@+id/editText2"
+        android:id="@+id/inputpass"
         android:hint = "Enter Password"
-        android:layout_below="@+id/editText"
-        android:layout_alignStart="@+id/editText" />
+        android:layout_below="@+id/inputusr"
+        android:layout_alignStart="@+id/inputusr" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:id="@+id/editText"
+        android:id="@+id/inputusr"
         android:hint = "Enter Name"
         android:inputType="textPersonName"
-        android:layout_below="@+id/login_switch"
+        android:layout_below="@+id/signup_switch"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="25dp" />
+
+    <TextView
+        android:text="Seller"
+        android:textSize="18sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView4"
+        android:layout_alignBaseline="@+id/signup_switch"
+        android:layout_alignBottom="@+id/signup_switch"
+        android:layout_alignEnd="@+id/inputusr" />
+
+    <TextView
+        android:text="EV Driver"
+        android:textSize="18sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView3"
+        android:layout_alignBaseline="@+id/signup_switch"
+        android:layout_alignBottom="@+id/signup_switch"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="22dp" />
+
+    <TextView
+        android:text="Don't have an account?"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView"
+        android:layout_centerVertical="true"
+        android:layout_alignStart="@+id/inputpass" />
 
 </RelativeLayout>

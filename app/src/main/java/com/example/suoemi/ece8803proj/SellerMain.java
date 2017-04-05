@@ -39,7 +39,7 @@ public class SellerMain extends AppCompatActivity {
                             Button btn3 = (Button) findViewById(R.id.selsett_btn);
                             Button btn4 = (Button) findViewById(R.id.logout_btn);
 
-                            if (btn.getText().toString().equals("") || btn2.getText().toString().equals("")) {
+                            if (btn.getText().toString().equals(" ") || btn2.getText().toString().equals(" ")) {
                                 AlertDialog.Builder builder2 = new AlertDialog.Builder(SellerMain.this);
                                 builder2
                                         .setTitle("One or more of your input data is 0")
@@ -70,14 +70,12 @@ public class SellerMain extends AppCompatActivity {
                     })
                     .setNegativeButton("No", null)                        //Do nothing on no
                     .show();
-        }
-        else if(prevAct.equals("SellerInput"))
-        {
-            RemoteViews remoteV = new RemoteViews(getPackageName(), R.layout.sell_main);
+
             Button btn = (Button)findViewById(R.id.energybid_btn);
             Button btn2 = (Button)findViewById(R.id.energyprice_btn);
             Button btn3 = (Button) findViewById(R.id.selsett_btn);
             Button btn4 = (Button) findViewById(R.id.logout_btn);
+            Button btn5 = (Button) findViewById(R.id.output_btn);
 
             btn.setText(selleramt);
             btn2.setText(sellerprice);
@@ -109,12 +107,68 @@ public class SellerMain extends AppCompatActivity {
                     startActivity(mIntent);
                 }
             });
+
+            btn5.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent mIntent = new Intent(SellerMain.this, Output.class);
+                    startActivity(mIntent);
+                }
+            });
+
+        }
+        else if(prevAct.equals("SellerInput"))
+        {
+            RemoteViews remoteV = new RemoteViews(getPackageName(), R.layout.sell_main);
+            Button btn = (Button)findViewById(R.id.energybid_btn);
+            Button btn2 = (Button)findViewById(R.id.energyprice_btn);
+            Button btn3 = (Button) findViewById(R.id.selsett_btn);
+            Button btn4 = (Button) findViewById(R.id.logout_btn);
+            Button btn5 = (Button) findViewById(R.id.output_btn);
+
+            btn.setText(selleramt);
+            btn2.setText(sellerprice);
+
+            btn.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent mIntent = new Intent(SellerMain.this, SellerInput.class);
+                    startActivity(mIntent);
+                }
+            });
+
+            btn2.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent mIntent = new Intent(SellerMain.this, SellerInput.class);
+                    startActivity(mIntent);
+                }
+            });
+
+            btn3.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent mIntent = new Intent(SellerMain.this, SellerProfile.class);
+                    startActivity(mIntent);
+                }
+            });
+
+            btn4.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent mIntent = new Intent(SellerMain.this, LoginActivity.class);
+                    startActivity(mIntent);
+                }
+            });
+
+            btn5.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent mIntent = new Intent(SellerMain.this, Output.class);
+                    startActivity(mIntent);
+                }
+            });
         }
         else {
             Button btn = (Button)findViewById(R.id.energybid_btn);
             Button btn2 = (Button)findViewById(R.id.energyprice_btn);
             Button btn3 = (Button) findViewById(R.id.selsett_btn);
             Button btn4 = (Button) findViewById(R.id.logout_btn);
+            Button btn5 = (Button) findViewById(R.id.output_btn);
 
             btn.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -140,6 +194,13 @@ public class SellerMain extends AppCompatActivity {
             btn4.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     Intent mIntent = new Intent(SellerMain.this, LoginActivity.class);
+                    startActivity(mIntent);
+                }
+            });
+
+            btn5.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent mIntent = new Intent(SellerMain.this, Output.class);
                     startActivity(mIntent);
                 }
             });

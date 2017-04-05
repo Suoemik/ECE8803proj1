@@ -16,10 +16,10 @@
         android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:ems="10"
-        android:id="@+id/editText2"
+        android:id="@+id/inputpass"
         android:hint = "Password"
-        android:layout_below="@+id/editText"
-        android:layout_alignStart="@+id/editText" />
+        android:layout_below="@+id/inputusr"
+        android:layout_alignStart="@+id/inputusr" />
 
     <TextView
         android:text=" Seller Profile"
@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/signup_btn"
         android:layout_marginTop="15dp"
-        android:layout_below="@+id/editText2"
+        android:layout_below="@+id/inputpass"
         android:layout_centerHorizontal="true"
         android:background="@color/colorAccent"/>
 
@@ -44,11 +44,11 @@
         android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/login_switch"
+        android:id="@+id/signup_switch"
         android:layout_alignBaseline="@+id/textView3"
         android:layout_alignBottom="@+id/textView3"
         android:layout_toStartOf="@+id/textView4"
-        android:layout_marginEnd="13dp" />
+        android:layout_marginEnd="13dp"/>
 
     <TextView
         android:text=" EV Driver Profile"
@@ -65,28 +65,28 @@
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:ems="10"
-        android:id="@+id/editText"
+        android:id="@+id/inputusr"
         android:hint = "Enter Name"
         android:layout_marginTop="76dp"
-        android:layout_below="@+id/login_switch"
+        android:layout_below="@+id/signup_switch"
         android:layout_centerHorizontal="true" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="phone"
+        android:inputType="number|phone"
         android:ems="10"
-        android:id="@+id/editText4"
+        android:id="@+id/inputnum"
         android:hint="Enter Phone Number"
         android:layout_marginTop="30dp"
-        android:layout_below="@+id/login_switch"
-        android:layout_alignStart="@+id/editText" />
+        android:layout_below="@+id/signup_switch"
+        android:layout_alignStart="@+id/inputusr" />
 
     <Button
         android:text="Log In Here"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/login_btn"
+        android:id="@+id/login_btn2"
         android:textAppearance="@android:style/TextAppearance.Material.Small"
         android:layout_alignBaseline="@+id/textView"
         android:layout_alignBottom="@+id/textView"
@@ -100,6 +100,6 @@
         android:layout_marginTop="31dp"
         android:id="@+id/textView"
         android:layout_below="@+id/signup_btn"
-        android:layout_alignEnd="@+id/login_switch" />
+        android:layout_alignEnd="@+id/signup_switch" />
 
 </RelativeLayout>

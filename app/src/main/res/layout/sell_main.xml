@@ -45,7 +45,7 @@
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="400dp"
         android:layout_height="wrap_content"
         android:id="@+id/energybid_btn"
         android:textAppearance="@android:style/TextAppearance.Material.Small"
@@ -66,7 +66,7 @@
         android:textSize="20sp" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="400dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView22"
         android:layout_alignStart="@+id/energybid_btn"
@@ -97,5 +97,14 @@
         android:textAlignment="center"
         android:layout_below="@+id/textView20"
         android:layout_alignStart="@+id/textView22" />
+
+    <Button
+        android:text="View Ouput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/switch3"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="31dp"
+        android:id="@+id/output_btn" />
 
 </RelativeLayout>

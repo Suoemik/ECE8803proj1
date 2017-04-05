@@ -22,7 +22,7 @@ public class SellerProfile extends AppCompatActivity {
 
         Button logoutbtn = (Button) findViewById(R.id.splogout_btn);
         Button mainbtn = (Button) findViewById(R.id.spmain_btn);
-        locbtn = (Button) findViewById(R.id.sloc_btn);
+        locbtn = (Button) findViewById(R.id.bloc_btn);
 
         logoutbtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

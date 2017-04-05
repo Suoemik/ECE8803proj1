@@ -19,6 +19,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.List;
+
 import static com.example.suoemi.ece8803proj.BuyerInput.buyeramt;
 
 /**
@@ -32,15 +34,23 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
     protected GoogleApiClient mGoogleApiClient;
     protected boolean mAddressRequested;
     protected String mAddressOutput;
-    Button mFetchAddressButton;
+    private Button mFetchAddressButton;
+    private Button btn;
+    private Button btn2;
+    private Button btn3;
+    private Button btn4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.buy_main);
 
-        Button btn = (Button) findViewById(R.id.begin_btn);
-        Button btn2 = (Button) findViewById(R.id.energyreq_btn);
+        btn = (Button) findViewById(R.id.begin_btn);
+        btn2 = (Button) findViewById(R.id.energyreq_btn);
+        btn3 = (Button)findViewById(R.id.buysett_btn);
+        btn4 = (Button) findViewById(R.id.bm_logout) ;
+        final DbHandler dbHandler = new DbHandler(this);
+
 
         mResultReceiver = new AddressResultReceiver(new Handler());
         mFetchAddressButton = (Button) findViewById(R.id.benterloc);
@@ -53,6 +63,27 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
                 Intent mIntent = new Intent(BuyerMain.this, SellerMain.class);
                 mIntent.putExtra("FROM_ACTIVITY", "BuyerMain");
                 startActivity(mIntent);
+            }
+        });
+
+        btn3.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startActivity(new Intent(BuyerMain.this, BuyerProfile.class));
+            }
+        });
+
+        btn4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("Reading: ", "Reading account..");
+                List<LoginData> loginDatas = dbHandler.getAllEVLog();
+
+                for(LoginData loginData : loginDatas){
+                    if(loginData.getCheck() == 1){
+                        loginData.setCheck(0);
+                        startActivity(new Intent(BuyerMain.this, LoginActivity.class));
+                    }
+                }
             }
         });
 

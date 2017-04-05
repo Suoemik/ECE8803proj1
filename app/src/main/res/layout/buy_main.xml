@@ -15,7 +15,7 @@
 
     <Button
         android:text="Log Out"
-        android:id="@+id/button"
+        android:id="@+id/bm_logout"
         android:textSize="12sp"
         android:layout_width="75dp"
         android:layout_height="35dp"
@@ -31,18 +31,6 @@
         android:layout_marginTop="50dp"
         android:layout_below="@+id/textView15"
         android:layout_toEndOf="@+id/buysett_btn" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/energyreq_btn"
-        android:textAppearance="@android:style/TextAppearance.Material.Small"
-        android:textSize="24sp"
-        android:background="?attr/colorControlHighlight"
-        android:textStyle="normal|bold"
-        android:layout_below="@+id/textView8"
-        android:layout_alignStart="@+id/loc_txt"
-        tools:background="?attr/colorBackgroundFloating" />
 
     <TextView
         android:id="@+id/textView15"
@@ -85,5 +73,17 @@
         android:layout_below="@+id/energyreq_btn"
         android:layout_centerHorizontal="true"
         android:background="@color/colorAccent"/>
+
+    <Button
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/energyreq_btn"
+        android:textAppearance="@android:style/TextAppearance.Material.Small"
+        android:textSize="24sp"
+        android:background="?attr/colorControlHighlight"
+        android:textStyle="normal|bold"
+        tools:background="?attr/colorBackgroundFloating"
+        android:layout_below="@+id/textView8"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
