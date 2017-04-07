@@ -5,19 +5,27 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
-import static com.example.suoemi.ece8803proj.SellerInput.selleramt;
-import static com.example.suoemi.ece8803proj.SellerInput.sellerprice;
+import java.util.List;
 
 /**
  * Created by Suoemi on 3/17/2017.
  */
 
+
 public class SellerMain extends AppCompatActivity {
+
+    private Button btn;
+    private Button btn2;
+    private Button btn3;
+    private Button btn4;
+    private Button btn5;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,6 +33,14 @@ public class SellerMain extends AppCompatActivity {
 
         Intent mIntent = getIntent();
         String prevAct = mIntent.getStringExtra("FROM_ACTIVITY");
+        final DbHandler dbHandler = new DbHandler(this);
+        final List<LoginData> loginDatas = dbHandler.getAllSellLog();
+        btn = (Button) findViewById(R.id.energybid_btn);
+        btn2 = (Button) findViewById(R.id.energyprice_btn);
+        btn3 = (Button) findViewById(R.id.selsett_btn);
+        btn4 = (Button) findViewById(R.id.logout_btn);
+        btn5 = (Button) findViewById(R.id.output_btn);
+
 
         if(prevAct.equals("BuyerMain")) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -34,10 +50,6 @@ public class SellerMain extends AppCompatActivity {
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             //Yes button clicked, do something
-                            Button btn = (Button) findViewById(R.id.energybid_btn);
-                            Button btn2 = (Button) findViewById(R.id.energybid_btn);
-                            Button btn3 = (Button) findViewById(R.id.selsett_btn);
-                            Button btn4 = (Button) findViewById(R.id.logout_btn);
 
                             if (btn.getText().toString().equals(" ") || btn2.getText().toString().equals(" ")) {
                                 AlertDialog.Builder builder2 = new AlertDialog.Builder(SellerMain.this);
@@ -71,15 +83,6 @@ public class SellerMain extends AppCompatActivity {
                     .setNegativeButton("No", null)                        //Do nothing on no
                     .show();
 
-            Button btn = (Button)findViewById(R.id.energybid_btn);
-            Button btn2 = (Button)findViewById(R.id.energyprice_btn);
-            Button btn3 = (Button) findViewById(R.id.selsett_btn);
-            Button btn4 = (Button) findViewById(R.id.logout_btn);
-            Button btn5 = (Button) findViewById(R.id.output_btn);
-
-            btn.setText(selleramt);
-            btn2.setText(sellerprice);
-
             btn.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     Intent mIntent = new Intent(SellerMain.this, SellerInput.class);
@@ -103,8 +106,18 @@ public class SellerMain extends AppCompatActivity {
 
             btn4.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    Intent mIntent = new Intent(SellerMain.this, LoginActivity.class);
-                    startActivity(mIntent);
+                    for(LoginData loginData : loginDatas) {
+                        if (loginData.getCheck() == 1) {
+                            loginData.setCheck(0);
+                            dbHandler.updateSellLoginData(loginData);
+                            String log = "Id: " + loginData.getId() + ", Name: " + loginData.getUsername()
+                                    + ", Password: " + loginData.getPassword() + ", Current: "
+                                    + loginData.getCheck() + ", Amt: " + loginData.geteBid() + ", Price: " + loginData.getePrice();
+                            Log.d("Logout Sell:: ", log);
+                            Intent mIntent = new Intent(SellerMain.this, LoginActivity.class);
+                            startActivity(mIntent);
+                        }
+                    }
                 }
             });
 
@@ -114,19 +127,20 @@ public class SellerMain extends AppCompatActivity {
                     startActivity(mIntent);
                 }
             });
+
+            for(LoginData loginData : loginDatas) {
+                if (loginData.getCheck() == 1) {
+                    int ebid = loginData.geteBid();
+                    int eprice = loginData.getePrice();
+                    btn.setText(Integer.toString(ebid));
+                    btn2.setText(Integer.toString(eprice));
+                }
+            }
 
         }
         else if(prevAct.equals("SellerInput"))
         {
             RemoteViews remoteV = new RemoteViews(getPackageName(), R.layout.sell_main);
-            Button btn = (Button)findViewById(R.id.energybid_btn);
-            Button btn2 = (Button)findViewById(R.id.energyprice_btn);
-            Button btn3 = (Button) findViewById(R.id.selsett_btn);
-            Button btn4 = (Button) findViewById(R.id.logout_btn);
-            Button btn5 = (Button) findViewById(R.id.output_btn);
-
-            btn.setText(selleramt);
-            btn2.setText(sellerprice);
 
             btn.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -151,8 +165,18 @@ public class SellerMain extends AppCompatActivity {
 
             btn4.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    Intent mIntent = new Intent(SellerMain.this, LoginActivity.class);
-                    startActivity(mIntent);
+                    for(LoginData loginData : loginDatas) {
+                        if (loginData.getCheck() == 1) {
+                        loginData.setCheck(0);
+                        dbHandler.updateSellLoginData(loginData);
+                        String log = "Id: " + loginData.getId() + ", Name: " + loginData.getUsername()
+                                + ", Password: " + loginData.getPassword() + ", Current: "
+                                + loginData.getCheck() + ", Amt: " + loginData.geteBid() + ", Price: " + loginData.getePrice();
+                        Log.d("Logout Sell:: ", log);
+                        Intent mIntent = new Intent(SellerMain.this, LoginActivity.class);
+                        startActivity(mIntent);
+                        }
+                    }
                 }
             });
 
@@ -162,13 +186,18 @@ public class SellerMain extends AppCompatActivity {
                     startActivity(mIntent);
                 }
             });
+
+            for(LoginData loginData : loginDatas) {
+                if (loginData.getCheck() == 1) {
+                    int ebid = loginData.geteBid();
+                    int eprice = loginData.getePrice();
+                    btn.setText(Integer.toString(ebid));
+                    btn2.setText(Integer.toString(eprice));
+                }
+            }
+
         }
         else {
-            Button btn = (Button)findViewById(R.id.energybid_btn);
-            Button btn2 = (Button)findViewById(R.id.energyprice_btn);
-            Button btn3 = (Button) findViewById(R.id.selsett_btn);
-            Button btn4 = (Button) findViewById(R.id.logout_btn);
-            Button btn5 = (Button) findViewById(R.id.output_btn);
 
             btn.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -193,8 +222,18 @@ public class SellerMain extends AppCompatActivity {
 
             btn4.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    Intent mIntent = new Intent(SellerMain.this, LoginActivity.class);
-                    startActivity(mIntent);
+                    for(LoginData loginData : loginDatas) {
+                        if (loginData.getCheck() == 1) {
+                            loginData.setCheck(0);
+                            dbHandler.updateSellLoginData(loginData);
+                            String log = "Id: " + loginData.getId() + ", Name: " + loginData.getUsername()
+                                    + ", Password: " + loginData.getPassword() + ", Current: "
+                                    + loginData.getCheck() + ", Amt: " + loginData.geteBid() + ", Price: " + loginData.getePrice();
+                            Log.d("Logout Sell:: ", log);
+                            Intent mIntent = new Intent(SellerMain.this, LoginActivity.class);
+                            startActivity(mIntent);
+                        }
+                    }
                 }
             });
 
@@ -204,6 +243,15 @@ public class SellerMain extends AppCompatActivity {
                     startActivity(mIntent);
                 }
             });
+
+            for(LoginData loginData : loginDatas) {
+                if (loginData.getCheck() == 1) {
+                    int ebid = loginData.geteBid();
+                    int eprice = loginData.getePrice();
+                    btn.setText(Integer.toString(ebid));
+                    btn2.setText(Integer.toString(eprice));
+                }
+            }
 
         }
 

@@ -21,8 +21,6 @@ import com.google.android.gms.location.LocationServices;
 
 import java.util.List;
 
-import static com.example.suoemi.ece8803proj.BuyerInput.buyeramt;
-
 /**
  * Created by Suoemi on 3/17/2017.
  */
@@ -51,6 +49,7 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
         btn4 = (Button) findViewById(R.id.bm_logout) ;
         final DbHandler dbHandler = new DbHandler(this);
 
+        final List<LoginData> loginDatas = dbHandler.getAllEVLog();
 
         mResultReceiver = new AddressResultReceiver(new Handler());
         mFetchAddressButton = (Button) findViewById(R.id.benterloc);
@@ -75,14 +74,23 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
         btn4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("Reading: ", "Reading account..");
-                List<LoginData> loginDatas = dbHandler.getAllEVLog();
 
                 for(LoginData loginData : loginDatas){
                     if(loginData.getCheck() == 1){
                         loginData.setCheck(0);
+                        dbHandler.updateEVLoginData(loginData);
+                        String log = "Id: " + loginData.getId() + ", Name: "
+                                + loginData.getUsername() + ", Password: "
+                                + loginData.getPassword() + ", Current: " + loginData.getCheck()
+                                + ", Req: " + loginData.getEVReq();
+                        Log.d("Logout:: ", log);
                         startActivity(new Intent(BuyerMain.this, LoginActivity.class));
                     }
+                    String log = "Id: " + loginData.getId() + ", Name: "
+                            + loginData.getUsername() + ", Password: "
+                            + loginData.getPassword() + ", Current: " + loginData.getCheck()
+                            + ", Req: " + loginData.getEVReq();
+                    Log.d("All:: ", log);
                 }
             }
         });
@@ -94,8 +102,12 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
                 startActivity(mIntent);
             }
         });
-        btn2.setText(buyeramt);
-
+        for(LoginData loginData : loginDatas) {
+            if (loginData.getCheck() == 1) {
+                int req = loginData.getEVReq();
+                btn2.setText(Integer.toString(req));
+            }
+        }
         buildGoogleApiClient();
     }
 
