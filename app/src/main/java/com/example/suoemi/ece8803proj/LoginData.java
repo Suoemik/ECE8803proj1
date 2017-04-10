@@ -13,12 +13,13 @@ public class LoginData {
     private int eBid;
     private int ePrice;
     private int check;
+    private int join;
 
     public LoginData(){
 
     }
 
-    public LoginData(int id, String username, String password, String number, int quant, int price, int check){
+    public LoginData(int id, String username, String password, String number, int quant, int price, int check, int join){
         this.id = id;
         this.username = username;
         this.password = password;
@@ -27,9 +28,10 @@ public class LoginData {
         this.eBid = quant;
         this.ePrice = price;
         this.check = check;
+        this.join = join;
     }
 
-    public LoginData(String username, String password, String number, int quant, int price, int check){
+    public LoginData(String username, String password, String number, int quant, int price, int check, int join){
         this.username = username;
         this.password = password;
         this.number = number;
@@ -37,6 +39,7 @@ public class LoginData {
         this.eBid = quant;
         this.ePrice = price;
         this.check = check;
+        this.join = join;
     }
 
     public void setId(int id) {
@@ -65,6 +68,7 @@ public class LoginData {
         this.ePrice = ePrice;
     }
     public void setCheck(int check){ this.check = check; }
+    public void setJoin(int join){ this.join = join; }
 
     public int getId() {
         return id;
@@ -95,4 +99,6 @@ public class LoginData {
     }
 
     public int getCheck(){ return check; }
+
+    public int getJoin(){ return join; }
 }

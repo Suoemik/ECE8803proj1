@@ -51,7 +51,9 @@ public class SignupActivity extends AppCompatActivity {
                                 String dbpass = inppass.getText().toString();
 
                                 Log.d("Insert:", "Inserting ..");
-                                dB.addEVLog(new LoginData(dbusr, dbpass, dbnum, 0, 0, 0));
+                                LoginData logdat = new LoginData(dbusr, dbpass, dbnum, 0, 0, 0, 0);
+                                dB.addEVLog(logdat);
+                                dB.updateEVLoginData(logdat);
 
                                 for (LoginData loginData : evlist) {
                                     String log = "Id: " + loginData.getId() + ", Name: "
@@ -77,7 +79,7 @@ public class SignupActivity extends AppCompatActivity {
                                 String dbpass = inppass.getText().toString();
 
                                 Log.d("Insert:", "Inserting ..");
-                                LoginData logdat = new LoginData(dbusr, dbpass, dbnum, 0, 0, 0);
+                                LoginData logdat = new LoginData(dbusr, dbpass, dbnum, 0, 0, 0, 0);
                                 dB.addEVSell(logdat);
                                 Log.d("Reading: ", "Reading all shops..");
                                 for (LoginData loginData : selllist) {

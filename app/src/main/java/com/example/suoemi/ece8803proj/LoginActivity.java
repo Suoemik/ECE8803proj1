@@ -21,7 +21,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button btn3;
     private Button btn4;
     private Switch sw;
-    private EditText buyusr;
+    public EditText buyusr;
     private EditText buypass;
 
     @Override
@@ -37,6 +37,7 @@ public class LoginActivity extends AppCompatActivity {
         final DbHandler dB = new DbHandler(this);
         final List<LoginData> evlist = dB.getAllEVLog();
         final List<LoginData> selllist = dB.getAllSellLog();
+        final LoginActivity loginActivity = new LoginActivity();
 
         sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

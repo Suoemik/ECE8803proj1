@@ -48,7 +48,7 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
         btn3 = (Button)findViewById(R.id.buysett_btn);
         btn4 = (Button) findViewById(R.id.bm_logout) ;
         final DbHandler dbHandler = new DbHandler(this);
-
+        final LoginActivity loginActivity = new LoginActivity();
         final List<LoginData> loginDatas = dbHandler.getAllEVLog();
 
         mResultReceiver = new AddressResultReceiver(new Handler());
@@ -59,9 +59,7 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
 
         btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent mIntent = new Intent(BuyerMain.this, SellerMain.class);
-                mIntent.putExtra("FROM_ACTIVITY", "BuyerMain");
-                startActivity(mIntent);
+                new SellerMain().callSeller();
             }
         });
 
@@ -76,7 +74,6 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
             public void onClick(View v) {
 
                 for(LoginData loginData : loginDatas){
-                    if(loginData.getCheck() == 1){
                         loginData.setCheck(0);
                         dbHandler.updateEVLoginData(loginData);
                         String log = "Id: " + loginData.getId() + ", Name: "
@@ -84,14 +81,8 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
                                 + loginData.getPassword() + ", Current: " + loginData.getCheck()
                                 + ", Req: " + loginData.getEVReq();
                         Log.d("Logout:: ", log);
-                        startActivity(new Intent(BuyerMain.this, LoginActivity.class));
-                    }
-                    String log = "Id: " + loginData.getId() + ", Name: "
-                            + loginData.getUsername() + ", Password: "
-                            + loginData.getPassword() + ", Current: " + loginData.getCheck()
-                            + ", Req: " + loginData.getEVReq();
-                    Log.d("All:: ", log);
                 }
+                startActivity(new Intent(BuyerMain.this, LoginActivity.class));
             }
         });
 
@@ -103,7 +94,7 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
             }
         });
         for(LoginData loginData : loginDatas) {
-            if (loginData.getCheck() == 1) {
+            if (loginData.getUsername().equals(loginActivity.buyusr.getText().toString())) {
                 int req = loginData.getEVReq();
                 btn2.setText(Integer.toString(req));
             }

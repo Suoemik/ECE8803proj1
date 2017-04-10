@@ -16,13 +16,13 @@ import java.util.List;
  */
 
 public class SellerInput extends AppCompatActivity {
-    public static EditText selleramttxt;
-    public static EditText sellerpricetxt;
+    public EditText selleramttxt;
+    public EditText sellerpricetxt;
 
-    public static String selleramt;
-    public static String sellerprice;
-    public static SharedPreferences savedamt;
-    public static SharedPreferences savedprice;
+    public String selleramt;
+    public String sellerprice;
+    public SharedPreferences savedamt;
+    public SharedPreferences savedprice;
 
     private Button btn;
 
@@ -36,6 +36,8 @@ public class SellerInput extends AppCompatActivity {
 
         btn =(Button)findViewById(R.id.energybidOKbtn);
         final DbHandler dB = new DbHandler(this);
+        final LoginActivity loginActivity = new LoginActivity();
+
         selleramttxt = (EditText)findViewById(R.id.editTextenergyreq);
         sellerpricetxt = (EditText)findViewById(R.id.editTextenergyprice);
 
@@ -56,7 +58,7 @@ public class SellerInput extends AppCompatActivity {
                 List<LoginData> loginDatas = dB.getAllSellLog();
 
                 for (LoginData loginData : loginDatas) {
-                    if(loginData.getCheck() == 1){
+                    if(loginData.getUsername().equals(loginActivity.buyusr.getText().toString())){
                         loginData.seteBid(Integer.parseInt(selleramt));
                         loginData.setePrice(Integer.parseInt(sellerprice));
                         dB.updateSellLoginData(loginData);

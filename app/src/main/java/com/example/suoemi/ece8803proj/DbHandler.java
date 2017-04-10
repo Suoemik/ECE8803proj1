@@ -33,7 +33,7 @@ public class DbHandler extends SQLiteOpenHelper {
     public static final String COLUMN_NAME_ePRICE = "seller_price";
     public static final String COLUMN_NAME_eVREQ = "ev_requirement";
     public static final String COLUMN_CURR_ACC = "current_account";
-
+    public static final String COLUMN_JOIN = "join_bid";
 
     public DbHandler(Context context){
         super(context, DATABASE_NAME,null, DATABASE_VERSION);
@@ -43,11 +43,11 @@ public class DbHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db){
         String EV_Log_entries = "CREATE TABLE " + TABLE_EV_Login + "(" + TABLE_ID
                 + " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_NAME_USER + " TEXT,"
-                + COLUMN_NAME_PASS + " TEXT," + COLUMN_NAME_No + " TEXT," + COLUMN_NAME_eVREQ + " INTEGER," + COLUMN_NAME_ePRICE + " INTEGER," + COLUMN_CURR_ACC + " INTEGER)";
+                + COLUMN_NAME_PASS + " TEXT," + COLUMN_NAME_No + " TEXT," + COLUMN_NAME_eVREQ + " INTEGER," + COLUMN_NAME_ePRICE + " INTEGER," + COLUMN_CURR_ACC + " INTEGER," + COLUMN_JOIN + " INTEGER)";
 
         String SELL_Log_entries = "CREATE TABLE " + TABLE_SELL_Login + "(" + TABLE_ID
                 + " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_NAME_USER + " TEXT,"
-                + COLUMN_NAME_PASS + " TEXT," + COLUMN_NAME_No + " TEXT," + COLUMN_NAME_eBID + " INTEGER," + COLUMN_NAME_ePRICE + " INTEGER," + COLUMN_CURR_ACC + " INTEGER)";
+                + COLUMN_NAME_PASS + " TEXT," + COLUMN_NAME_No + " TEXT," + COLUMN_NAME_eBID + " INTEGER," + COLUMN_NAME_ePRICE + " INTEGER," + COLUMN_CURR_ACC + " INTEGER," + COLUMN_JOIN + " INTEGER)";
 
         db.execSQL(EV_Log_entries);
         db.execSQL(SELL_Log_entries);
@@ -70,6 +70,7 @@ public class DbHandler extends SQLiteOpenHelper {
         values.put(COLUMN_NAME_eVREQ, loginData.getEVReq());
         values.put(COLUMN_NAME_ePRICE, loginData.getePrice());
         values.put(COLUMN_CURR_ACC, loginData.getCheck());
+        values.put(COLUMN_JOIN, loginData.getJoin());
 
         db.insert(TABLE_EV_Login, null, values);
         String log = "Id: " + loginData.getId();
@@ -87,6 +88,7 @@ public class DbHandler extends SQLiteOpenHelper {
         values2.put(COLUMN_NAME_eBID, loginData.geteBid());
         values2.put(COLUMN_NAME_ePRICE, loginData.getePrice());
         values2.put(COLUMN_CURR_ACC, loginData.getCheck());
+        values2.put(COLUMN_JOIN, loginData.getJoin());
 
         db.insert(TABLE_SELL_Login, null, values2);
         db.close();
@@ -95,26 +97,26 @@ public class DbHandler extends SQLiteOpenHelper {
     public LoginData getEVLog(int id){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor choose = db.query(TABLE_EV_Login, new String[]{TABLE_ID,
-                COLUMN_NAME_USER, COLUMN_NAME_PASS, COLUMN_NAME_No, COLUMN_NAME_eVREQ, COLUMN_NAME_ePRICE, COLUMN_CURR_ACC}, TABLE_ID + "=?",
+                COLUMN_NAME_USER, COLUMN_NAME_PASS, COLUMN_NAME_No, COLUMN_NAME_eVREQ, COLUMN_NAME_ePRICE, COLUMN_CURR_ACC, COLUMN_JOIN}, TABLE_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
 
         if(choose != null)
             choose.moveToFirst();
         LoginData contact = new LoginData(choose.getInt(0),
-                choose.getString(1), choose.getString(2), choose.getString(3), choose.getInt(4), choose.getInt(5), choose.getInt(6));
+                choose.getString(1), choose.getString(2), choose.getString(3), choose.getInt(4), choose.getInt(5), choose.getInt(6), choose.getInt(7));
         return contact;
     }
 
     public LoginData getSellLog(int id){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor choose = db.query(TABLE_SELL_Login, new String[]{TABLE_ID,
-                        COLUMN_NAME_USER, COLUMN_NAME_PASS, COLUMN_NAME_No, COLUMN_NAME_eBID, COLUMN_NAME_ePRICE, COLUMN_CURR_ACC}, TABLE_ID + "=?",
+                        COLUMN_NAME_USER, COLUMN_NAME_PASS, COLUMN_NAME_No, COLUMN_NAME_eBID, COLUMN_NAME_ePRICE, COLUMN_CURR_ACC, COLUMN_JOIN}, TABLE_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
 
         if(choose != null)
             choose.moveToFirst();
         LoginData contact = new LoginData(choose.getInt(0),
-                choose.getString(1), choose.getString(2), choose.getString(3), choose.getInt(4), choose.getInt(5), choose.getInt(6));
+                choose.getString(1), choose.getString(2), choose.getString(3), choose.getInt(4), choose.getInt(5), choose.getInt(6), choose.getInt(7));
         return contact;
     }
 
@@ -136,6 +138,7 @@ public class DbHandler extends SQLiteOpenHelper {
                 loginData.setEvReq(choose.getInt(4));
                 loginData.setePrice(choose.getInt(5));
                 loginData.setCheck(choose.getInt(6));
+                loginData.setJoin(choose.getInt(7));
 
                 LoginDataList.add(loginData);
             }
@@ -161,6 +164,7 @@ public class DbHandler extends SQLiteOpenHelper {
                 loginData.seteBid(choose.getInt(4));
                 loginData.setePrice(choose.getInt(5));
                 loginData.setCheck(choose.getInt(6));
+                loginData.setJoin(choose.getInt(7));
 
                 LoginDataList.add(loginData);
             }
@@ -197,6 +201,7 @@ public class DbHandler extends SQLiteOpenHelper {
         values.put(COLUMN_NAME_eVREQ, loginData.getEVReq());
         values.put(COLUMN_NAME_ePRICE, loginData.getePrice());
         values.put(COLUMN_CURR_ACC, loginData.getCheck());
+        values.put(COLUMN_JOIN, loginData.getJoin());
 
 // updating row
         return db.update(TABLE_EV_Login, values, TABLE_ID + " = ?",
@@ -213,6 +218,7 @@ public class DbHandler extends SQLiteOpenHelper {
         values.put(COLUMN_NAME_eBID, loginData.geteBid());
         values.put(COLUMN_NAME_ePRICE, loginData.getePrice());
         values.put(COLUMN_CURR_ACC, loginData.getCheck());
+        values.put(COLUMN_JOIN, loginData.getJoin());
 
         return db.update(TABLE_SELL_Login, values, TABLE_ID + " = ?",
                 new String[]{String.valueOf(loginData.getId())});

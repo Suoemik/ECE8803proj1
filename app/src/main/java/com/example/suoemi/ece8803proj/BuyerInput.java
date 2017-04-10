@@ -29,6 +29,7 @@ public class BuyerInput extends AppCompatActivity {
 
         btn =(Button)findViewById(R.id.energyreqOKbtn);
         final DbHandler dB = new DbHandler(this);
+        final LoginActivity loginActivity = new LoginActivity();
         buyeramttxt = (EditText)findViewById(R.id.editTextenergyreq);
 
         buyeramttxt.setText(savedreq.getString("buyerreq", buyeramt));
@@ -43,7 +44,7 @@ public class BuyerInput extends AppCompatActivity {
                 List<LoginData> loginDatas = dB.getAllEVLog();
 
                 for (LoginData loginData : loginDatas) {
-                    if(loginData.getCheck() == 1){
+                    if(loginData.getUsername().equals(loginActivity.buyusr.getText().toString())){
                         loginData.setEvReq(Integer.parseInt(buyeramt));
                         dB.updateEVLoginData(loginData);
                         String log = "Id: " + loginData.getId() + ", Name: " + loginData.getUsername()
