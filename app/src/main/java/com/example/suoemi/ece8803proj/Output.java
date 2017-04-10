@@ -40,10 +40,14 @@ public class Output extends AppCompatActivity {
     private int c1;
     private int u1;
     private int returnCode;
-    private double[] sol;
+    public double[] sol;
+    public double outp;
+    public double outa;
     TableRow tr;
     TextView sellusr;
     TextView sellamt;
+    TextView buytot;
+    TextView pricetot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +110,10 @@ public class Output extends AppCompatActivity {
                     LayoutParams.WRAP_CONTENT));
         }
 
+        buytot.setText("EV driver total amount: " + outa);
+        pricetot.setText("EV driver total price: " + outp);
+        relLay.addView(buytot);
+
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -151,6 +159,12 @@ public class Output extends AppCompatActivity {
         catch (Exception e)
         {
             fail(e.toString());
+        }
+
+        for(int i = 0; i < sol.length; i++)
+        {
+            outp += sol[i];
+            outa += ub[i];
         }
     }
 

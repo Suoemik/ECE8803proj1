@@ -60,6 +60,7 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
         btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 new SellerMain().callSeller();
+                startActivity(new Intent(BuyerMain.this, Output.class));
             }
         });
 
