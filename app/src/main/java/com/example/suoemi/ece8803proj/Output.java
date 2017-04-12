@@ -127,8 +127,8 @@ public class Output extends AppCompatActivity {
         {
             if(loginData.getCheck() == 1)
             {
-                c1 = loginData.getePrice();
-                u1 = loginData.geteBid();
+                this.c1 = loginData.getePrice();
+                this.u1 = loginData.geteBid();
             }
         }
 
@@ -152,7 +152,7 @@ public class Output extends AppCompatActivity {
         try {
             returnCode = opt.optimize();
             assertEquals("success ", OptimizationResponse.SUCCESS, returnCode);
-            sol = opt.getOptimizationResponse().getSolution();
+            this.sol = opt.getOptimizationResponse().getSolution();
             String log = "Solution: " + Arrays.toString(sol);
             Log.d("Solution:: ", log);
         }

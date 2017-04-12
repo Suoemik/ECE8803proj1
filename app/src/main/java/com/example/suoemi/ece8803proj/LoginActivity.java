@@ -23,57 +23,31 @@ public class LoginActivity extends AppCompatActivity {
     private Switch sw;
     public EditText buyusr;
     private EditText buypass;
+    private String UsrNm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        btn3 = (Button) findViewById(R.id.login_btn);
-        btn4 = (Button) findViewById(R.id.signup_btn2);
-        sw = (Switch) findViewById(R.id.signup_switch);
-        buyusr = (EditText) findViewById(R.id.inputusr);
-        buypass = (EditText) findViewById(R.id.inputpass);
+        this.btn3 = (Button) findViewById(R.id.login_btn);
+        this.btn4 = (Button) findViewById(R.id.signup_btn2);
+        this.sw = (Switch) findViewById(R.id.signup_switch);
+        this.buyusr = (EditText) findViewById(R.id.inputusr);
+        this.buypass = (EditText) findViewById(R.id.inputpass);
         final DbHandler dB = new DbHandler(this);
         final List<LoginData> evlist = dB.getAllEVLog();
         final List<LoginData> selllist = dB.getAllSellLog();
-        final LoginActivity loginActivity = new LoginActivity();
 
         sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked == false) {
+                if (isChecked) {
                     btn3.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
                             String dbusr = buyusr.getText().toString();
                             String dbpass = buypass.getText().toString();
-
-                            for (LoginData loginData : evlist) {
-                                if(dbusr.equals(loginData.getUsername()) && dbpass.equals(loginData.getPassword())){
-                                    loginData.setCheck(1);
-                                    dB.updateEVLoginData(loginData);
-                                    String log = "Id: " + loginData.getId() + ", Name: "
-                                            + loginData.getUsername() + ", Password: "
-                                            + loginData.getPassword() + ", Current: "
-                                            + loginData.getCheck();
-                                    Log.d("EV Login:: ", log);
-                                    startActivity(new Intent(LoginActivity.this, BuyerMain.class));
-                                }
-                                else if(dbusr.length()==0 || dbpass.length()==0) {
-                                    Toast.makeText(LoginActivity.this, "Error, no input", Toast.LENGTH_LONG).show();
-                                }
-                                else{
-                                    Toast.makeText(LoginActivity.this, "Error, Incorrect EV username or password", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-
-                        }
-                    });
-                } else {
-                    btn3.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            String dbusr = buyusr.getText().toString();
-                            String dbpass = buypass.getText().toString();
+                            setusrnm(dbusr);
 
                             for (LoginData loginData : selllist) {
                                 if(dbusr.equals(loginData.getUsername()) && dbpass.equals(loginData.getPassword())){
@@ -101,6 +75,35 @@ public class LoginActivity extends AppCompatActivity {
 
                         }
                     });
+                } ///
+                else {
+                    btn3.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            String dbusr = buyusr.getText().toString();
+                            String dbpass = buypass.getText().toString();
+                            setusrnm(dbusr);
+
+                            for (LoginData loginData : evlist) {
+                                if(dbusr.equals(loginData.getUsername()) && dbpass.equals(loginData.getPassword())){
+                                    loginData.setCheck(1);
+                                    dB.updateEVLoginData(loginData);
+                                    String log = "Id: " + loginData.getId() + ", Name: "
+                                            + loginData.getUsername() + ", Password: "
+                                            + loginData.getPassword() + ", Current: "
+                                            + loginData.getCheck();
+                                    Log.d("EV Login:: ", log);
+                                    startActivity(new Intent(LoginActivity.this, BuyerMain.class));
+                                }
+                                else if(dbusr.length()==0 || dbpass.length()==0) {
+                                    Toast.makeText(LoginActivity.this, "Error, no input", Toast.LENGTH_LONG).show();
+                                }
+                                else{
+                                    Toast.makeText(LoginActivity.this, "Error, Incorrect EV username or password", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                        }
+                    });
                 }
             }
         });
@@ -111,5 +114,13 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(LoginActivity.this, SignupActivity.class));
             }
         });
+    }
+
+    public void setusrnm(String usrnm){
+        this.UsrNm = usrnm;
+    }
+
+    public String getusrnm(){
+        return UsrNm;
     }
 }

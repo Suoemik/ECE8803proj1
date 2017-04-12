@@ -28,12 +28,12 @@ public class SignupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        btn = (Button) findViewById(R.id.signup_btn);
-        btn2 = (Button) findViewById(R.id.login_btn2);
-        sw = (Switch) findViewById(R.id.signup_switch);
-        inpnum = (EditText)findViewById(R.id.inputnum);
-        inpusr = (EditText)findViewById(R.id.inputusr);
-        inppass = (EditText)findViewById(R.id.inputpass);
+        this.btn = (Button) findViewById(R.id.signup_btn);
+        this.btn2 = (Button) findViewById(R.id.login_btn2);
+        this.sw = (Switch) findViewById(R.id.signup_switch);
+        this.inpnum = (EditText)findViewById(R.id.inputnum);
+        this.inpusr = (EditText)findViewById(R.id.inputusr);
+        this.inppass = (EditText)findViewById(R.id.inputpass);
         final DbHandler dB = new DbHandler(this);
         final List<LoginData> evlist = dB.getAllEVLog();
         final List<LoginData> selllist = dB.getAllSellLog();

@@ -27,7 +27,7 @@ public class BuyerInput extends AppCompatActivity {
         setContentView(R.layout.energyreq_input);
         savedreq = getSharedPreferences("requirement", MODE_PRIVATE);
 
-        btn =(Button)findViewById(R.id.energyreqOKbtn);
+        this.btn =(Button)findViewById(R.id.energyreqOKbtn);
         final DbHandler dB = new DbHandler(this);
         final LoginActivity loginActivity = new LoginActivity();
         buyeramttxt = (EditText)findViewById(R.id.editTextenergyreq);
@@ -44,7 +44,7 @@ public class BuyerInput extends AppCompatActivity {
                 List<LoginData> loginDatas = dB.getAllEVLog();
 
                 for (LoginData loginData : loginDatas) {
-                    if(loginData.getUsername().equals(loginActivity.buyusr.getText().toString())){
+                    if(loginData.getUsername().equals(loginActivity.getusrnm())){
                         loginData.setEvReq(Integer.parseInt(buyeramt));
                         dB.updateEVLoginData(loginData);
                         String log = "Id: " + loginData.getId() + ", Name: " + loginData.getUsername()

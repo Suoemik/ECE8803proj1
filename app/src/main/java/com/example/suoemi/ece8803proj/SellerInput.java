@@ -31,15 +31,15 @@ public class SellerInput extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.energybid_input);
 
-        savedamt = getSharedPreferences("amount", MODE_PRIVATE);
-        savedprice = getSharedPreferences("price", MODE_PRIVATE);
+        this.savedamt = getSharedPreferences("amount", MODE_PRIVATE);
+        this.savedprice = getSharedPreferences("price", MODE_PRIVATE);
 
         btn =(Button)findViewById(R.id.energybidOKbtn);
         final DbHandler dB = new DbHandler(this);
         final LoginActivity loginActivity = new LoginActivity();
 
-        selleramttxt = (EditText)findViewById(R.id.editTextenergyreq);
-        sellerpricetxt = (EditText)findViewById(R.id.editTextenergyprice);
+        this.selleramttxt = (EditText)findViewById(R.id.editTextenergyreq);
+        this.sellerpricetxt = (EditText)findViewById(R.id.editTextenergyprice);
 
         selleramttxt.setText(savedamt.getString("selleramt", selleramt));
         sellerpricetxt.setText(savedprice.getString("sellerprice", sellerprice));
@@ -58,7 +58,7 @@ public class SellerInput extends AppCompatActivity {
                 List<LoginData> loginDatas = dB.getAllSellLog();
 
                 for (LoginData loginData : loginDatas) {
-                    if(loginData.getUsername().equals(loginActivity.buyusr.getText().toString())){
+                    if(loginData.getUsername().equals(loginActivity.getusrnm())){
                         loginData.seteBid(Integer.parseInt(selleramt));
                         loginData.setePrice(Integer.parseInt(sellerprice));
                         dB.updateSellLoginData(loginData);

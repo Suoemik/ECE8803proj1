@@ -35,11 +35,11 @@ public class SellerMain extends AppCompatActivity {
         String prevAct = mIntent.getStringExtra("FROM_ACTIVITY");
         final DbHandler dbHandler = new DbHandler(this);
         final List<LoginData> loginDatas = dbHandler.getAllSellLog();
-        btn = (Button) findViewById(R.id.energybid_btn);
-        btn2 = (Button) findViewById(R.id.energyprice_btn);
-        btn3 = (Button) findViewById(R.id.selsett_btn);
-        btn4 = (Button) findViewById(R.id.logout_btn);
-        btn5 = (Button) findViewById(R.id.output_btn);
+        this.btn = (Button) findViewById(R.id.energybid_btn);
+        this.btn2 = (Button) findViewById(R.id.energyprice_btn);
+        this.btn3 = (Button) findViewById(R.id.selsett_btn);
+        this.btn4 = (Button) findViewById(R.id.logout_btn);
+        this.btn5 = (Button) findViewById(R.id.output_btn);
         final LoginActivity loginActivity = new LoginActivity();
 
         RemoteViews remoteV = new RemoteViews(getPackageName(), R.layout.sell_main);
@@ -88,7 +88,7 @@ public class SellerMain extends AppCompatActivity {
         });
 
         for(LoginData loginData : loginDatas) {
-            if (loginData.getUsername().equals(loginActivity.buyusr.getText().toString())) {
+            if (loginData.getUsername().equals(loginActivity.getusrnm())) {
                 int ebid = loginData.geteBid();
                 int eprice = loginData.getePrice();
                 btn.setText(Integer.toString(ebid));
@@ -119,7 +119,7 @@ public class SellerMain extends AppCompatActivity {
                         //Yes button clicked, do something
                         for(LoginData loginData : loginDatas)
                         {
-                            if(loginData.getUsername().equals(loginActivity.buyusr.getText().toString()))
+                            if(loginData.getUsername().equals(loginActivity.getusrnm()))
                             {
                                 loginData.setJoin(1);
                             }
@@ -200,7 +200,7 @@ public class SellerMain extends AppCompatActivity {
         });
 
         for(LoginData loginData : loginDatas) {
-            if (loginData.getUsername().equals(loginActivity.buyusr.getText().toString())) {
+            if (loginData.getUsername().equals(loginActivity.getusrnm())) {
                 int ebid = loginData.geteBid();
                 int eprice = loginData.getePrice();
                 btn.setText(Integer.toString(ebid));

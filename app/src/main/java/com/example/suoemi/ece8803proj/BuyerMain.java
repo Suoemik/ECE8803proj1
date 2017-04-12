@@ -43,10 +43,10 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.buy_main);
 
-        btn = (Button) findViewById(R.id.begin_btn);
-        btn2 = (Button) findViewById(R.id.energyreq_btn);
-        btn3 = (Button)findViewById(R.id.buysett_btn);
-        btn4 = (Button) findViewById(R.id.bm_logout) ;
+        this.btn = (Button) findViewById(R.id.begin_btn);
+        this.btn2 = (Button) findViewById(R.id.energyreq_btn);
+        this.btn3 = (Button)findViewById(R.id.buysett_btn);
+        this.btn4 = (Button) findViewById(R.id.bm_logout) ;
         final DbHandler dbHandler = new DbHandler(this);
         final LoginActivity loginActivity = new LoginActivity();
         final List<LoginData> loginDatas = dbHandler.getAllEVLog();
@@ -95,7 +95,7 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
             }
         });
         for(LoginData loginData : loginDatas) {
-            if (loginData.getUsername().equals(loginActivity.buyusr.getText().toString())) {
+             if (loginData.getUsername().equals(loginActivity.getusrnm())) {
                 int req = loginData.getEVReq();
                 btn2.setText(Integer.toString(req));
             }
