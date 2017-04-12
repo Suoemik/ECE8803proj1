@@ -50,6 +50,7 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
         final DbHandler dbHandler = new DbHandler(this);
         final LoginActivity loginActivity = new LoginActivity();
         final List<LoginData> loginDatas = dbHandler.getAllEVLog();
+        final List<LoginData> sellList = dbHandler.getAllSellLog();
 
         mResultReceiver = new AddressResultReceiver(new Handler());
         mFetchAddressButton = (Button) findViewById(R.id.benterloc);
@@ -59,7 +60,12 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
 
         btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                new SellerMain().callSeller();
+                for(LoginData loginData : sellList)
+                {
+                    if(loginData.getCheck()==1){
+                        loginData.setJoin(1);
+                    }
+                }
                 startActivity(new Intent(BuyerMain.this, Output.class));
             }
         });
