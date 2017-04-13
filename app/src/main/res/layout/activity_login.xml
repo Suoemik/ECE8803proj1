@@ -22,13 +22,14 @@
         android:background="@android:color/transparent"
         android:id="@+id/signup_btn2" />
 
-    <Switch
+    <Button
         android:text=""
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
         android:id="@+id/signup_switch"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:hint="User Type" />
 
     <Button
         android:text="Log In"
@@ -61,26 +62,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="25dp" />
 
-    <TextView
-        android:text="Seller"
-        android:textSize="18sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView4"
-        android:layout_alignBaseline="@+id/signup_switch"
-        android:layout_alignBottom="@+id/signup_switch"
-        android:layout_alignEnd="@+id/inputusr" />
-
-    <TextView
-        android:text="EV Driver"
-        android:textSize="18sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView3"
-        android:layout_alignBaseline="@+id/signup_switch"
-        android:layout_alignBottom="@+id/signup_switch"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="22dp" />
 
     <TextView
         android:text="Don't have an account?"

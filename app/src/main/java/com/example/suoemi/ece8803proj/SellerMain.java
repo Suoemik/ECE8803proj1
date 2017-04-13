@@ -35,18 +35,17 @@ public class SellerMain extends AppCompatActivity {
         String prevAct = mIntent.getStringExtra("FROM_ACTIVITY");
         final DbHandler dbHandler = new DbHandler(this);
         final List<LoginData> loginDatas = dbHandler.getAllSellLog();
-        this.btn = (Button) findViewById(R.id.energybid_btn);
-        this.btn2 = (Button) findViewById(R.id.energyprice_btn);
-        this.btn3 = (Button) findViewById(R.id.selsett_btn);
-        this.btn4 = (Button) findViewById(R.id.logout_btn);
-        this.btn5 = (Button) findViewById(R.id.output_btn);
+        btn = (Button) findViewById(R.id.energybid_btn);
+        btn2 = (Button) findViewById(R.id.energyprice_btn);
+        btn3 = (Button) findViewById(R.id.selsett_btn);
+        btn4 = (Button) findViewById(R.id.logout_btn);
+        btn5 = (Button) findViewById(R.id.output_btn);
         final LoginActivity loginActivity = new LoginActivity();
 
         RemoteViews remoteV = new RemoteViews(getPackageName(), R.layout.sell_main);
 
         for(LoginData loginData : loginDatas){
-            if(loginData.getJoin() == 1)
-            {
+            if(loginData.getJoin()==1){
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder
                         .setTitle("Would you like to participate in this energy auction?")
@@ -136,13 +135,11 @@ public class SellerMain extends AppCompatActivity {
                     }
                 });
 
-                for(LoginData loginData1 : loginDatas) {
-                    if (loginData.getUsername().equals(loginActivity.getusrnm())) {
-                        int ebid = loginData1.geteBid();
-                        int eprice = loginData1.getePrice();
-                        btn.setText(Integer.toString(ebid));
-                        btn2.setText(Integer.toString(eprice));
-                    }
+                if (loginData.getUsername().equals(loginActivity.UsrNm)) {
+                    int ebid = loginData.geteBid();
+                    int eprice = loginData.getePrice();
+                    btn.setText(Integer.toString(ebid));
+                    btn2.setText(Integer.toString(eprice));
                 }
             }
         }
@@ -192,6 +189,7 @@ public class SellerMain extends AppCompatActivity {
 
         for(LoginData loginData : loginDatas) {
             if (loginData.getUsername().equals(loginActivity.getusrnm())) {
+
                 int ebid = loginData.geteBid();
                 int eprice = loginData.getePrice();
                 btn.setText(Integer.toString(ebid));
@@ -201,4 +199,18 @@ public class SellerMain extends AppCompatActivity {
 
     }
 
+    void callSeller()
+    {
+        Intent mIntent = getIntent();
+        final DbHandler dbHandler = new DbHandler(this);
+        final List<LoginData> loginDatas = dbHandler.getAllSellLog();
+        btn = (Button) findViewById(R.id.energybid_btn);
+        btn2 = (Button) findViewById(R.id.energyprice_btn);
+        btn3 = (Button) findViewById(R.id.selsett_btn);
+        btn4 = (Button) findViewById(R.id.logout_btn);
+        btn5 = (Button) findViewById(R.id.output_btn);
+        final LoginActivity loginActivity = new LoginActivity();
+
+
+    }
 }

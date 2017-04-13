@@ -44,7 +44,7 @@ public class BuyerInput extends AppCompatActivity {
                 List<LoginData> loginDatas = dB.getAllEVLog();
 
                 for (LoginData loginData : loginDatas) {
-                    if(loginData.getUsername().equals(loginActivity.getusrnm())){
+                    if(loginData.getUsername().equals(loginActivity.UsrNm)){
                         loginData.setEvReq(Integer.parseInt(buyeramt));
                         dB.updateEVLoginData(loginData);
                         String log = "Id: " + loginData.getId() + ", Name: " + loginData.getUsername()

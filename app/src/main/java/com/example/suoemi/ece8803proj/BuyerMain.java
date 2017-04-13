@@ -62,9 +62,7 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
             public void onClick(View v) {
                 for(LoginData loginData : sellList)
                 {
-                    if(loginData.getCheck()==1){
-                        loginData.setJoin(1);
-                    }
+                    loginData.setJoin(1);
                 }
                 startActivity(new Intent(BuyerMain.this, Output.class));
             }
@@ -101,7 +99,7 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
             }
         });
         for(LoginData loginData : loginDatas) {
-             if (loginData.getUsername().equals(loginActivity.getusrnm())) {
+             if (loginData.getUsername().equals(loginActivity.UsrNm)) {
                 int req = loginData.getEVReq();
                 btn2.setText(Integer.toString(req));
             }

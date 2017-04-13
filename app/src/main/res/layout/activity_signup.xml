@@ -21,15 +21,6 @@
         android:layout_below="@+id/inputusr"
         android:layout_alignStart="@+id/inputusr" />
 
-    <TextView
-        android:text=" Seller Profile"
-        android:textSize="18sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView4"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/signup_btn" />
-
     <Button
         android:text="Sign Up"
         android:layout_width="wrap_content"
@@ -39,26 +30,6 @@
         android:layout_below="@+id/inputpass"
         android:layout_centerHorizontal="true"
         android:background="@color/colorAccent"/>
-
-    <Switch
-        android:text=""
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/signup_switch"
-        android:layout_alignBaseline="@+id/textView3"
-        android:layout_alignBottom="@+id/textView3"
-        android:layout_toStartOf="@+id/textView4"
-        android:layout_marginEnd="13dp"/>
-
-    <TextView
-        android:text=" EV Driver Profile"
-        android:textSize="18sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView3"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="16dp" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -82,17 +53,6 @@
         android:layout_below="@+id/signup_switch"
         android:layout_alignStart="@+id/inputusr" />
 
-    <Button
-        android:text="Log In Here"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/login_btn2"
-        android:textAppearance="@android:style/TextAppearance.Material.Small"
-        android:layout_alignBaseline="@+id/textView"
-        android:layout_alignBottom="@+id/textView"
-        android:layout_toEndOf="@+id/textView"
-        android:background="@android:color/transparent" />
-
     <TextView
         android:text="Already have an account?"
         android:layout_width="wrap_content"
@@ -101,5 +61,26 @@
         android:id="@+id/textView"
         android:layout_below="@+id/signup_btn"
         android:layout_alignEnd="@+id/signup_switch" />
+
+    <Button
+        android:text=""
+        android:layout_width="100dp"
+        android:id="@+id/signup_switch"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:hint="User Type"
+        android:layout_height="50dp" />
+
+    <Button
+        android:text="Log In Here"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/login_btn2"
+        android:textAppearance="@android:style/TextAppearance.Material.Small"
+        android:background="@android:color/transparent"
+        android:layout_alignBaseline="@+id/textView"
+        android:layout_alignBottom="@+id/textView"
+        android:layout_toEndOf="@+id/textView"
+        android:layout_marginStart="11dp" />
 
 </RelativeLayout>
