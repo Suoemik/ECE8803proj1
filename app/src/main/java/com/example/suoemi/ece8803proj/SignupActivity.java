@@ -2,12 +2,22 @@ package com.example.suoemi.ece8803proj;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
@@ -21,6 +31,11 @@ public class SignupActivity extends AppCompatActivity {
     private EditText inppass;
     public int evcount;
     public int sellcount;
+    private FirebaseAuth mAuth;
+    private DatabaseReference databaseref;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private static final String TAG = "SignupActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,10 +47,30 @@ public class SignupActivity extends AppCompatActivity {
         this.inpnum = (EditText)findViewById(R.id.inputnum);
         this.inpusr = (EditText)findViewById(R.id.inputusr);
         this.inppass = (EditText)findViewById(R.id.inputpass);
+
+        databaseref = FirebaseDatabase.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
         final DbHandler dB = new DbHandler(this);
         final List<LoginData> evlist = dB.getAllEVLog();
         final List<LoginData> selllist = dB.getAllSellLog();
 
+        Log.d("S count: ", "ID "+sellcount);
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                } else {
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                }
+                // ...
+            }
+        };
+        mAuth.addAuthStateListener(mAuthListener);
 
         sw.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,53 +90,68 @@ public class SignupActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
            public void onClick(View v) {
                if (sw.getText().toString().equals("SELLER")) {
-                           if (inpnum != null && inppass != null && inpusr != null) {
-                               String dbnum = inpnum.getText().toString();
-                               String dbusr = inpusr.getText().toString();
-                               String dbpass = inppass.getText().toString();
+                   Log.d(TAG, "signUp");
+                   if (!validateForm()) {
+                       return;
+                   }
 
-                               Log.d("Insert:", "Inserting ..");
-                               LoginData logdat = new LoginData(dbusr, dbpass, dbnum, 0, 0, 0, 0);
-                               dB.addEVLog(logdat);
-                               dB.updateEVLoginData(logdat);
+                   String dbnum = inpnum.getText().toString();
+                   final String dbusr = inpusr.getText().toString();
+                   String dbpass = inppass.getText().toString();
 
-                               for (LoginData loginData : evlist) {
-                                   String log = "Id: " + loginData.getId() + ", Name: "
-                                           + loginData.getUsername() + ", Password: "
-                                           + loginData.getPassword() + ", Current: "
-                                           + loginData.getCheck();
-                                   Log.d("EV signup:: ", log);
-                               }
-                               startActivity(new Intent(SignupActivity.this, LoginActivity.class));
-                           }
-               } else if (sw.getText().toString().equals("EV DRIVER")) {
-                           if (inpnum != null && inppass != null && inpusr != null) {
-                               String dbnum = inpnum.getText().toString();
-                               String dbusr = inpusr.getText().toString();
-                               String dbpass = inppass.getText().toString();
+                   mAuth.createUserWithEmailAndPassword(dbnum, dbpass)
+                             .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
+                                   @Override
+                                   public void onComplete(@NonNull Task<AuthResult> task) {
+                                       Log.d(TAG, "createUser:onComplete:" + task.isSuccessful());
 
-                               Log.d("Insert:", "Inserting ..");
-                               LoginData logdat = new LoginData(dbusr, dbpass, dbnum, 0, 0, 0, 0);
-                               dB.addEVSell(logdat);
-                               Log.d("Reading: ", "Reading all shops..");
-                               for (LoginData loginData : selllist) {
-                                   String log = "Id: " + loginData.getId() + ", Name: "
-                                           + loginData.getUsername() + ", Password: "
-                                           + loginData.getPassword() + ", Current: "
-                                           + loginData.getCheck();
-                                   Log.d("Sell signup:: ", log);
-                               }
+                                       if (task.isSuccessful()) {
+                                           databaseref.child("sellers").child(task.getResult().getUser().getUid()).child("username").setValue(dbusr);
+                                           databaseref.child("sellers").child(task.getResult().getUser().getUid()).child("email").setValue(task.getResult().getUser().getEmail());
 
-                               Intent mIntent = new Intent(SignupActivity.this, LoginActivity.class);
-                               mIntent.putExtra("FROM_ACTIVITY", "SignupActivity");
-                               startActivity(mIntent);
-                           }
+                                           startActivity(new Intent(SignupActivity.this, LoginActivity.class));
+                                           finish();
+                                       } else {
+                                           Toast.makeText(SignupActivity.this, "Sign Up Failed",
+                                                   Toast.LENGTH_SHORT).show();
+                                       }
+                                   }
+                               });
+                   }
+               else if (sw.getText().toString().equals("EV DRIVER")) {
+                    Log.d(TAG, "signUp");
+                       if (!validateForm()) {
+                           return;
+                       }
+                       String dbnum = inpnum.getText().toString();
+                       final String dbusr = inpusr.getText().toString();
+                       String dbpass = inppass.getText().toString();
 
-                           for (LoginData loginData : selllist) {
-                               if (inpusr.getText().toString().equals(loginData.getUsername())) {
-                                   Toast.makeText(SignupActivity.this, "Username already exists ", Toast.LENGTH_SHORT).show();
-                               }
-                           }
+                       mAuth.createUserWithEmailAndPassword(dbnum, dbpass)
+                               .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
+                                   @Override
+                                   public void onComplete(@NonNull Task<AuthResult> task) {
+                                       Log.d(TAG, "createUser:onComplete:" + task.isSuccessful());
+                                       if (task.isSuccessful()) {
+                                           databaseref.child("ev drivers").child(task.getResult().getUser().getUid()).child("username").setValue(dbusr);
+                                           databaseref.child("ev drivers").child(task.getResult().getUser().getUid()).child("email").setValue(task.getResult().getUser().getEmail());
+
+                                           Intent mIntent = new Intent(SignupActivity.this, LoginActivity.class);
+                                           mIntent.putExtra("FROM_ACTIVITY", "SignupActivity");
+                                           startActivity(mIntent);
+                                           finish();
+                                       } else {
+                                           Toast.makeText(SignupActivity.this, "Sign Up Failed",
+                                                   Toast.LENGTH_SHORT).show();
+                                       }
+                                   }
+                               });
+
+                   for (LoginData loginData : selllist) {
+                       if (inpusr.getText().toString().equals(loginData.getUsername())) {
+                           Toast.makeText(SignupActivity.this, "Username already exists ", Toast.LENGTH_SHORT).show();
+                       }
+                   }
                }else{
                    Toast.makeText(SignupActivity.this, "Error, no user type", Toast.LENGTH_SHORT);
                }
@@ -113,5 +163,37 @@ public class SignupActivity extends AppCompatActivity {
                 startActivity(new Intent(SignupActivity.this, LoginActivity.class));
             }
         });
+    }
+
+    private boolean validateForm() {
+        boolean result = true;
+        if (TextUtils.isEmpty(inpnum.getText().toString())) {
+            inpnum.setError("Required");
+            result = false;
+        } else {
+            inpnum.setError(null);
+        }
+
+        if (TextUtils.isEmpty(inppass.getText().toString())) {
+            inppass.setError("Required");
+            result = false;
+        } else {
+            inppass.setError(null);
+        }
+
+        return result;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
     }
 }

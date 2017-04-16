@@ -2,14 +2,25 @@ package com.example.suoemi.ece8803proj;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.List;
+
 /**
  * Created by Suoemi on 3/17/2017.
  */
@@ -22,6 +33,12 @@ public class LoginActivity extends AppCompatActivity {
     public EditText buyusr;
     private EditText buypass;
     public String UsrNm;
+    private int n;
+
+    private FirebaseAuth mAuth;
+    private DatabaseReference databaseref;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private static final String TAG = "LoginActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +50,26 @@ public class LoginActivity extends AppCompatActivity {
         this.sw = (Button) findViewById(R.id.signup_switch);
         this.buyusr = (EditText) findViewById(R.id.inputusr);
         this.buypass = (EditText) findViewById(R.id.inputpass);
+
+        databaseref = FirebaseDatabase.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
         final DbHandler dB = new DbHandler(this);
         final List<LoginData> evlist = dB.getAllEVLog();
         final List<LoginData> selllist = dB.getAllSellLog();
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                } else {
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                }
+            }
+        };
 
         sw.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,57 +89,66 @@ public class LoginActivity extends AppCompatActivity {
         btn3.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (sw.getText().toString().equals("SELLER")) {
-                    String dbusr = buyusr.getText().toString();
+                    Log.d(TAG, "signIn");
+                    if (!validateForm()) {
+                        return;
+                    }
+
+                    final String dbusr = buyusr.getText().toString();
                     String dbpass = buypass.getText().toString();
                     setusrnm(dbusr);
                     UsrNm = dbusr;
 
-                    for (LoginData loginData : selllist) {
-                        if (dbusr.equals(loginData.getUsername()) && dbpass.equals(loginData.getPassword())) {
-                            loginData.setCheck(1);
-                            dB.updateSellLoginData(loginData);
-                            String log = "Id: " + loginData.getId() + ", Name: "
-                                    + loginData.getUsername() + ", Password: "
-                                    + loginData.getPassword() + ", Current: "
-                                    + loginData.getCheck();
-                            Log.d("Sell Login:: ", log);
-                            startActivity(new Intent(LoginActivity.this, BuyerMain.class));
+                    mAuth.signInWithEmailAndPassword(dbusr, dbpass)
+                            .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    Log.d(TAG, "signIn:onComplete:" + task.isSuccessful());
 
-                            Intent mIntent = new Intent(LoginActivity.this, SellerMain.class);
-                            mIntent.putExtra("FROM_ACTIVITY", "LoginActivity");
-                            startActivity(mIntent);
-                        } else if (dbusr.length() == 0 || dbpass.length() == 0) {
-                            Toast.makeText(LoginActivity.this, "Error, no input", Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(LoginActivity.this, "Error, Incorrect username or password", Toast.LENGTH_SHORT).show();
-                        }
+                                    if (task.isSuccessful()) {
+                                        databaseref.child("sellers").child(task.getResult().getUser().getUid()).child("email").setValue(task.getResult().getUser().getEmail());
+
+                                        Intent mIntent = new Intent(LoginActivity.this, SellerMain.class);
+                                        mIntent.putExtra("FROM_ACTIVITY", "SignupActivity");
+                                        startActivity(mIntent);
+                                        finish();
+                                    } else {
+                                        Toast.makeText(LoginActivity.this, "Sign In Failed",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+
+                }
+                else if (sw.getText().toString().equals("EV DRIVER")) {
+                    Log.d(TAG, "signIn");
+                    if (!validateForm()) {
+                        return;
                     }
-                } else if (sw.getText().toString().equals("EV DRIVER")) {
-                    String dbusr = buyusr.getText().toString();
+
+                    final String dbusr = buyusr.getText().toString();
                     String dbpass = buypass.getText().toString();
                     setusrnm(dbusr);
-                    UsrNm = dbusr;
 
-                    for (LoginData loginData : evlist) {
-                        if (dbusr.equals(loginData.getUsername()) && dbpass.equals(loginData.getPassword())) {
-                            loginData.setCheck(1);
-                            dB.updateEVLoginData(loginData);
-                            String log = "Id: " + loginData.getId() + ", Name: "
-                                    + loginData.getUsername() + ", Password: "
-                                    + loginData.getPassword() + ", Current: "
-                                    + loginData.getCheck();
-                            Log.d("EV Login:: ", log);
-                            startActivity(new Intent(LoginActivity.this, BuyerMain.class));
-                        } else {
-                            Toast.makeText(LoginActivity.this, "Error, Incorrect EV username or password", Toast.LENGTH_SHORT).show();
-                        }
+                    mAuth.signInWithEmailAndPassword(dbusr, dbpass)
+                            .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    Log.d(TAG, "signIn:onComplete:" + task.isSuccessful());
 
-                        dB.updateEVLoginData(loginData);
-                        String log = "Id: " + loginData.getId() + ", Name: "
-                                + loginData.getUsername() + ", Password: "
-                                + loginData.getPassword();
-                        Log.d("EV Login:: ", log);
-                    }
+                                    if (task.isSuccessful()) {
+                                        databaseref.child("ev drivers").child(task.getResult().getUser().getUid()).child("email").setValue(task.getResult().getUser().getEmail());
+
+                                        Intent mIntent = new Intent(LoginActivity.this, BuyerMain.class);
+                                        mIntent.putExtra("FROM_ACTIVITY", "SignupActivity");
+                                        startActivity(mIntent);
+                                        finish();
+                                    } else {
+                                        Toast.makeText(LoginActivity.this, "Sign In Failed",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
 
                     if (dbusr.length() == 0 || dbpass.length() == 0) {
                         Toast.makeText(LoginActivity.this, "Error, no input", Toast.LENGTH_SHORT).show();
@@ -129,5 +172,38 @@ public class LoginActivity extends AppCompatActivity {
     public String getusrnm(){
         String usrnm = UsrNm;
         return UsrNm;
+    }
+
+    private boolean validateForm() {
+        boolean result = true;
+        if (TextUtils.isEmpty(buyusr.getText().toString())) {
+            buyusr.setError("Required");
+            result = false;
+        } else {
+            buyusr.setError(null);
+        }
+
+        if (TextUtils.isEmpty(buypass.getText().toString())) {
+            buypass.setError("Required");
+            result = false;
+        } else {
+            buypass.setError(null);
+        }
+
+        return result;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
     }
 }

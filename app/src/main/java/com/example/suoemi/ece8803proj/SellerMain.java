@@ -11,6 +11,14 @@ import android.widget.Button;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.List;
 
 /**
@@ -25,6 +33,11 @@ public class SellerMain extends AppCompatActivity {
     private Button btn3;
     private Button btn4;
     private Button btn5;
+    private FirebaseAuth mAuth;
+    private FirebaseUser muser;
+    private DatabaseReference databaseref;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private static final String TAG = "SellerMain";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +45,6 @@ public class SellerMain extends AppCompatActivity {
         setContentView(R.layout.sell_main);
 
         Intent mIntent = getIntent();
-        String prevAct = mIntent.getStringExtra("FROM_ACTIVITY");
         final DbHandler dbHandler = new DbHandler(this);
         final List<LoginData> loginDatas = dbHandler.getAllSellLog();
         btn = (Button) findViewById(R.id.energybid_btn);
@@ -41,6 +53,10 @@ public class SellerMain extends AppCompatActivity {
         btn4 = (Button) findViewById(R.id.logout_btn);
         btn5 = (Button) findViewById(R.id.output_btn);
         final LoginActivity loginActivity = new LoginActivity();
+        databaseref = FirebaseDatabase.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
+        muser = mAuth.getCurrentUser();
+
 
         RemoteViews remoteV = new RemoteViews(getPackageName(), R.layout.sell_main);
 
@@ -115,16 +131,9 @@ public class SellerMain extends AppCompatActivity {
 
                 btn4.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                        for(LoginData loginData : loginDatas) {
-                            loginData.setCheck(0);
-                            dbHandler.updateSellLoginData(loginData);
-                            String log = "Id: " + loginData.getId() + ", Name: " + loginData.getUsername()
-                                    + ", Password: " + loginData.getPassword() + ", Current: "
-                                    + loginData.getCheck() + ", Amt: " + loginData.geteBid() + ", Price: " + loginData.getePrice();
-                            Log.d("Logout Sell:: ", log);
-                            Intent mIntent = new Intent(SellerMain.this, LoginActivity.class);
-                            startActivity(mIntent);
-                        }
+                        mAuth.signOut();
+                        Intent mIntent = new Intent(SellerMain.this, LoginActivity.class);
+                        startActivity(mIntent);
                     }
                 });
 
@@ -167,16 +176,9 @@ public class SellerMain extends AppCompatActivity {
 
         btn4.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                for(LoginData loginData : loginDatas) {
-                    loginData.setCheck(0);
-                    dbHandler.updateSellLoginData(loginData);
-                    String log = "Id: " + loginData.getId() + ", Name: " + loginData.getUsername()
-                            + ", Password: " + loginData.getPassword() + ", Current: "
-                            + loginData.getCheck() + ", Amt: " + loginData.geteBid() + ", Price: " + loginData.getePrice();
-                    Log.d("Logout Sell:: ", log);
-                    Intent mIntent = new Intent(SellerMain.this, LoginActivity.class);
-                    startActivity(mIntent);
-                }
+                mAuth.signOut();
+                Intent mIntent = new Intent(SellerMain.this, LoginActivity.class);
+                startActivity(mIntent);
             }
         });
 
@@ -187,30 +189,38 @@ public class SellerMain extends AppCompatActivity {
             }
         });
 
-        for(LoginData loginData : loginDatas) {
-            if (loginData.getUsername().equals(loginActivity.getusrnm())) {
-
-                int ebid = loginData.geteBid();
-                int eprice = loginData.getePrice();
-                btn.setText(Integer.toString(ebid));
-                btn2.setText(Integer.toString(eprice));
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get Post object and use the values to update the UI
+                String ebid = dataSnapshot.getValue(String.class);
+                btn.setText(ebid);
             }
-        }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        };
+        ValueEventListener postListener2 = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get Post object and use the values to update the UI
+                String eprice = dataSnapshot.getValue(String.class);
+                btn2.setText(eprice);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        };
+        databaseref.child("sellers").child(muser.getUid()).child("bid amount").addValueEventListener(postListener);
+        databaseref.child("sellers").child(muser.getUid()).child("bid price").addValueEventListener(postListener2);
     }
 
-    void callSeller()
-    {
-        Intent mIntent = getIntent();
-        final DbHandler dbHandler = new DbHandler(this);
-        final List<LoginData> loginDatas = dbHandler.getAllSellLog();
-        btn = (Button) findViewById(R.id.energybid_btn);
-        btn2 = (Button) findViewById(R.id.energyprice_btn);
-        btn3 = (Button) findViewById(R.id.selsett_btn);
-        btn4 = (Button) findViewById(R.id.logout_btn);
-        btn5 = (Button) findViewById(R.id.output_btn);
-        final LoginActivity loginActivity = new LoginActivity();
-
-
-    }
 }

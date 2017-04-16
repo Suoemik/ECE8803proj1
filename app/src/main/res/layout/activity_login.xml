@@ -56,8 +56,8 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:id="@+id/inputusr"
-        android:hint = "Enter Name"
-        android:inputType="textPersonName"
+        android:hint = "Enter Email"
+        android:inputType="textEmailAddress"
         android:layout_below="@+id/signup_switch"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="25dp" />

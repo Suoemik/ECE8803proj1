@@ -4,12 +4,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import java.util.List;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * Created by Suoemi on 3/22/2017.
@@ -24,6 +26,12 @@ public class SellerInput extends AppCompatActivity {
     public SharedPreferences savedamt;
     public SharedPreferences savedprice;
 
+    private FirebaseAuth mAuth;
+    private FirebaseUser muser;
+    private DatabaseReference databaseref;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private static final String TAG = "SellerInput";
+
     private Button btn;
 
     @Override
@@ -33,6 +41,9 @@ public class SellerInput extends AppCompatActivity {
 
         this.savedamt = getSharedPreferences("amount", MODE_PRIVATE);
         this.savedprice = getSharedPreferences("price", MODE_PRIVATE);
+        databaseref = FirebaseDatabase.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
+        muser = mAuth.getCurrentUser();
 
         btn =(Button)findViewById(R.id.energybidOKbtn);
         final DbHandler dB = new DbHandler(this);
@@ -54,19 +65,11 @@ public class SellerInput extends AppCompatActivity {
                 savedprice.edit().putString("sellerprice", sellerprice);
                 savedprice.edit().commit();
 
-                Log.d("Reading: ", "Reading all account..");
-                List<LoginData> loginDatas = dB.getAllSellLog();
-
-                for (LoginData loginData : loginDatas) {
-                    if(loginData.getUsername().equals(loginActivity.getusrnm())){
-                        loginData.seteBid(Integer.parseInt(selleramt));
-                        loginData.setePrice(Integer.parseInt(sellerprice));
-                        dB.updateSellLoginData(loginData);
-                        String log = "Id: " + loginData.getId() + ", Name: " + loginData.getUsername()
-                                + ", Password: " + loginData.getPassword() + ", Current: "
-                                + loginData.getCheck() + ", Amt: " + loginData.geteBid() + ", Price" + loginData.getePrice();
-                        Log.d("Input Sell:: ", log);
-                    }
+                if(selleramt.length()!=0) {
+                    databaseref.child("sellers").child(muser.getUid()).child("bid amount").setValue(selleramt);
+                }
+                if(sellerprice.length()!=0) {
+                    databaseref.child("sellers").child(muser.getUid()).child("bid price").setValue(sellerprice);
                 }
 
                 Intent mIntent = new Intent(SellerInput.this, SellerMain.class);
