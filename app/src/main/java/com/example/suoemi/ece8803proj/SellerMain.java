@@ -144,12 +144,38 @@ public class SellerMain extends AppCompatActivity {
                     }
                 });
 
-                if (loginData.getUsername().equals(loginActivity.UsrNm)) {
-                    int ebid = loginData.geteBid();
-                    int eprice = loginData.getePrice();
-                    btn.setText(Integer.toString(ebid));
-                    btn2.setText(Integer.toString(eprice));
-                }
+                ValueEventListener postListener = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // Get Post object and use the values to update the UI
+                        String ebid = dataSnapshot.getValue(String.class);
+                        btn.setText(ebid);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // Getting Post failed, log a message
+                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                        // ...
+                    }
+                };
+                ValueEventListener postListener2 = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // Get Post object and use the values to update the UI
+                        String eprice = dataSnapshot.getValue(String.class);
+                        btn2.setText(eprice);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // Getting Post failed, log a message
+                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                        // ...
+                    }
+                };
+                databaseref.child("sellers").child(muser.getUid()).child("bid amount").addValueEventListener(postListener);
+                databaseref.child("sellers").child(muser.getUid()).child("bid price").addValueEventListener(postListener2);
             }
         }
 

@@ -16,6 +16,10 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.joptimizer.optimizers.LPOptimizationRequest;
 import com.joptimizer.optimizers.LPPrimalDualMethod;
 import com.joptimizer.optimizers.OptimizationResponse;
@@ -43,6 +47,13 @@ public class Output extends AppCompatActivity {
     public double[] sol;
     public double outp;
     public double outa;
+
+    private FirebaseAuth mAuth;
+    private FirebaseUser muser;
+    private DatabaseReference databaseref;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private static final String TAG = "BuyerInput";
+
     TableRow tr;
     TextView sellusr;
     TextView sellamt;
@@ -53,6 +64,9 @@ public class Output extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ouput);
+
+        databaseref = FirebaseDatabase.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
 
         RelativeLayout relLay = (RelativeLayout) findViewById(R.id.info);
         TableLayout tabLay = (TableLayout) findViewById(R.id.tableinfo);
@@ -123,6 +137,7 @@ public class Output extends AppCompatActivity {
         DbHandler db = new DbHandler(this);
         LPOptimizationRequest or = new LPOptimizationRequest();
         List<LoginData> loginDatasell = db.getAllSellLog();
+
         for(LoginData loginData : loginDatasell)
         {
             if(loginData.getCheck() == 1)

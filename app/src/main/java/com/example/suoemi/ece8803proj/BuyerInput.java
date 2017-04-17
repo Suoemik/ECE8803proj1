@@ -4,30 +4,43 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import java.util.List;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 /**
  * Created by Suoemi on 3/22/2017.
  */
 
 public class BuyerInput extends AppCompatActivity {
-    public static EditText buyeramttxt;
+    public EditText buyeramttxt;
+    public String buyeramt;
+    public SharedPreferences savedreq;
 
-    public static String buyeramt;
-    public static SharedPreferences savedreq;
+    private FirebaseAuth mAuth;
+    private FirebaseUser muser;
+    private DatabaseReference databaseref;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private static final String TAG = "BuyerInput";
+
     private Button btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.energyreq_input);
-        savedreq = getSharedPreferences("requirement", MODE_PRIVATE);
 
-        this.btn =(Button)findViewById(R.id.energyreqOKbtn);
+        this.savedreq = getSharedPreferences("requirement", MODE_PRIVATE);
+        databaseref = FirebaseDatabase.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
+        muser = mAuth.getCurrentUser();
+
+        btn =(Button)findViewById(R.id.energyreqOKbtn);
         final DbHandler dB = new DbHandler(this);
         final LoginActivity loginActivity = new LoginActivity();
         buyeramttxt = (EditText)findViewById(R.id.editTextenergyreq);
@@ -40,18 +53,8 @@ public class BuyerInput extends AppCompatActivity {
                 savedreq.edit().putString("buyerreq", buyeramt);
                 savedreq.edit().commit();
 
-                Log.d("Reading: ", "Reading all account..");
-                List<LoginData> loginDatas = dB.getAllEVLog();
-
-                for (LoginData loginData : loginDatas) {
-                    if(loginData.getUsername().equals(loginActivity.UsrNm)){
-                        loginData.setEvReq(Integer.parseInt(buyeramt));
-                        dB.updateEVLoginData(loginData);
-                        String log = "Id: " + loginData.getId() + ", Name: " + loginData.getUsername()
-                                + ", Password: " + loginData.getPassword() + ", Current: "
-                                + loginData.getCheck() + ", Req: " + loginData.getEVReq();
-                        Log.d("Input EV:: ", log);
-                    }
+                if(buyeramt.length()!=0) {
+                    databaseref.child("ev drivers").child(muser.getUid()).child("ev req").setValue(buyeramt);
                 }
 
                 Intent mIntent = new Intent(BuyerInput.this, BuyerMain.class);
