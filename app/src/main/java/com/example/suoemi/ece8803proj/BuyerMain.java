@@ -2,6 +2,7 @@ package com.example.suoemi.ece8803proj;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
@@ -13,6 +14,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ScrollView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -26,7 +31,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by Suoemi on 3/17/2017.
@@ -40,10 +46,34 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
     protected boolean mAddressRequested;
     protected String mAddressOutput;
     private Button mFetchAddressButton;
+
+    private int c1;
+    private int u1;
+    private int returnCode;
+    private double[] sol;
+    private double[] c;
+    private double[] B;
+    private double[] ub;
+    private Map<String, Object> usr_sell;
+    private Map<String, Object> usr_buy;
+    private double outp;
+    private double outa;
+
     private Button btn;
     private Button btn2;
     private Button btn3;
     private Button btn4;
+
+    private TextView sellusr;
+    private TextView sellamt;
+    private TextView buytot;
+    private TextView pricetot;
+    private ArrayList<String> allsell;
+    private ArrayList<String> allbuy;
+
+    private TextView title;
+    private TableRow tr;
+
     private FirebaseAuth mAuth;
     private FirebaseUser muser;
     private DatabaseReference databaseref;
@@ -59,10 +89,9 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
         this.btn2 = (Button) findViewById(R.id.energyreq_btn);
         this.btn3 = (Button)findViewById(R.id.buysett_btn);
         this.btn4 = (Button) findViewById(R.id.bm_logout) ;
-        final DbHandler dbHandler = new DbHandler(this);
-        final LoginActivity loginActivity = new LoginActivity();
-        final List<LoginData> loginDatas = dbHandler.getAllEVLog();
-        final List<LoginData> sellList = dbHandler.getAllSellLog();
+
+        allsell = new ArrayList<>();
+        allbuy = new ArrayList<>();
 
         databaseref = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
@@ -74,9 +103,96 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
         mAddressRequested = false;
         mAddressOutput = "";
 
+        ScrollView scrollView = (ScrollView) findViewById(R.id.scrollbuy);
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                } else {
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                }
+                // ...
+            }
+        };
+        mAuth.addAuthStateListener(mAuthListener);
+
+        TableLayout tabLay = (TableLayout) findViewById(R.id.tableinfosell);
+        title = new TextView(this);
+        tr = new TableRow(this);
+
+        TableRow.LayoutParams params1 = new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT);
+        params1.setMargins(30, 100, 10, 10);
+        params1.span = 2;
+
+        title.setText("OUTPUT");
+        title.setLayoutParams(params1);
+        title.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        title.setTypeface(null, Typeface.BOLD);
+        tr.addView(title);
+
+        tabLay.addView(tr, new TableLayout.LayoutParams(
+                TableRow.LayoutParams.FILL_PARENT,
+                TableRow.LayoutParams.WRAP_CONTENT));
+
         btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 databaseref.child("ev drivers").child(muser.getUid()).child("join").setValue("1");
+                ValueEventListener joinlist = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // Get Post object and use the values to update the UI
+                        ArrayList<String> allusr = new ArrayList<String>();
+                        usr_sell = (Map<String, Object>) dataSnapshot.getValue();
+
+                        for(Map.Entry<String, Object> entry : usr_sell.entrySet())
+                        {
+                            Map singlesell = (Map) entry.getValue();
+                            //allsell.add((String) singlesell.get("username"));
+                            allusr.add(entry.getKey());
+                        }
+                        for(int i = 0; i<allusr.size(); i++)
+                        {
+                            Log.d(TAG, "array list for seller: " + allusr.get(i));
+                            databaseref.child("sellers").child(allusr.get(i)).child("join").setValue("0");
+                        }
+
+                        ValueEventListener joinlist2 = new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                //Log.d(TAG, "usr_sell: " + allsell);
+                                usr_buy = (Map<String, Object>) dataSnapshot.getValue();
+
+                                for (Map.Entry<String, Object> entry : usr_buy.entrySet()) {
+                                    Map singlebuy = (Map) entry.getValue();
+                                    allbuy.add((String) singlebuy.get("username"));
+                                }
+                                Log.d(TAG, "usr_buy: " + allbuy);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                // Getting Post failed, log a message
+                                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                                // ...
+                            }
+                        };
+                        databaseref.child("ev drivers").addValueEventListener(joinlist2);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // Getting Post failed, log a message
+                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                        // ...
+                    }
+                };
+                databaseref.child("sellers").addValueEventListener(joinlist);
+
             }
         });
 
@@ -202,6 +318,19 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
             if (mAddressRequested) {
                 startIntentService();
             }
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
         }
     }
 }

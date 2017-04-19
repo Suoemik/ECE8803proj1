@@ -19,7 +19,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -31,6 +33,7 @@ public class SignupActivity extends AppCompatActivity {
     private EditText inppass;
     public int evcount;
     public int sellcount;
+    private Map<String, Object> map;
     private FirebaseAuth mAuth;
     private DatabaseReference databaseref;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -48,6 +51,7 @@ public class SignupActivity extends AppCompatActivity {
         this.inpusr = (EditText)findViewById(R.id.inputusr);
         this.inppass = (EditText)findViewById(R.id.inputpass);
 
+        map = new HashMap<String, Object>();
         databaseref = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
         final DbHandler dB = new DbHandler(this);
@@ -106,8 +110,11 @@ public class SignupActivity extends AppCompatActivity {
                                        Log.d(TAG, "createUser:onComplete:" + task.isSuccessful());
 
                                        if (task.isSuccessful()) {
-                                           databaseref.child("sellers").child(task.getResult().getUser().getUid()).child("username").setValue(dbusr);
-                                           databaseref.child("sellers").child(task.getResult().getUser().getUid()).child("email").setValue(task.getResult().getUser().getEmail());
+
+                                           map.put("username", dbusr);
+                                           map.put("email", task.getResult().getUser().getEmail());
+
+                                           databaseref.child("sellers").child(task.getResult().getUser().getUid()).updateChildren(map);
 
                                            startActivity(new Intent(SignupActivity.this, LoginActivity.class));
                                            finish();
@@ -133,8 +140,10 @@ public class SignupActivity extends AppCompatActivity {
                                    public void onComplete(@NonNull Task<AuthResult> task) {
                                        Log.d(TAG, "createUser:onComplete:" + task.isSuccessful());
                                        if (task.isSuccessful()) {
-                                           databaseref.child("ev drivers").child(task.getResult().getUser().getUid()).child("username").setValue(dbusr);
-                                           databaseref.child("ev drivers").child(task.getResult().getUser().getUid()).child("email").setValue(task.getResult().getUser().getEmail());
+                                           map.put("username", dbusr);
+                                           map.put("email", task.getResult().getUser().getEmail());
+
+                                           databaseref.child("ev drivers").child(task.getResult().getUser().getUid()).updateChildren(map);
 
                                            Intent mIntent = new Intent(SignupActivity.this, LoginActivity.class);
                                            mIntent.putExtra("FROM_ACTIVITY", "SignupActivity");

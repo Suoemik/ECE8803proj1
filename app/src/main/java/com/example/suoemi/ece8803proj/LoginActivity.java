@@ -36,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
     private int n;
 
     private FirebaseAuth mAuth;
+    private FirebaseUser muser;
     private DatabaseReference databaseref;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private static final String TAG = "LoginActivity";
@@ -53,6 +54,8 @@ public class LoginActivity extends AppCompatActivity {
 
         databaseref = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
+        muser = mAuth.getCurrentUser();
+
         final DbHandler dB = new DbHandler(this);
         final List<LoginData> evlist = dB.getAllEVLog();
         final List<LoginData> selllist = dB.getAllSellLog();
@@ -106,8 +109,6 @@ public class LoginActivity extends AppCompatActivity {
                                     Log.d(TAG, "signIn:onComplete:" + task.isSuccessful());
 
                                     if (task.isSuccessful()) {
-                                        databaseref.child("sellers").child(task.getResult().getUser().getUid()).child("email").setValue(task.getResult().getUser().getEmail());
-
                                         Intent mIntent = new Intent(LoginActivity.this, SellerMain.class);
                                         mIntent.putExtra("FROM_ACTIVITY", "SignupActivity");
                                         startActivity(mIntent);
@@ -137,8 +138,6 @@ public class LoginActivity extends AppCompatActivity {
                                     Log.d(TAG, "signIn:onComplete:" + task.isSuccessful());
 
                                     if (task.isSuccessful()) {
-                                        databaseref.child("ev drivers").child(task.getResult().getUser().getUid()).child("email").setValue(task.getResult().getUser().getEmail());
-
                                         Intent mIntent = new Intent(LoginActivity.this, BuyerMain.class);
                                         mIntent.putExtra("FROM_ACTIVITY", "SignupActivity");
                                         startActivity(mIntent);

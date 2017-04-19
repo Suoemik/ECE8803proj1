@@ -13,6 +13,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by Suoemi on 3/22/2017.
  */
@@ -22,6 +25,7 @@ public class BuyerInput extends AppCompatActivity {
     public String buyeramt;
     public SharedPreferences savedreq;
 
+    private Map<String, Object> map;
     private FirebaseAuth mAuth;
     private FirebaseUser muser;
     private DatabaseReference databaseref;
@@ -36,6 +40,8 @@ public class BuyerInput extends AppCompatActivity {
         setContentView(R.layout.energyreq_input);
 
         this.savedreq = getSharedPreferences("requirement", MODE_PRIVATE);
+
+        map = new HashMap<String, Object>();
         databaseref = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
         muser = mAuth.getCurrentUser();
@@ -54,7 +60,8 @@ public class BuyerInput extends AppCompatActivity {
                 savedreq.edit().commit();
 
                 if(buyeramt.length()!=0) {
-                    databaseref.child("ev drivers").child(muser.getUid()).child("ev req").setValue(buyeramt);
+                    map.put("ev req", buyeramt);
+                    databaseref.child("ev drivers").child(muser.getUid()).updateChildren(map);
                 }
 
                 Intent mIntent = new Intent(BuyerInput.this, BuyerMain.class);

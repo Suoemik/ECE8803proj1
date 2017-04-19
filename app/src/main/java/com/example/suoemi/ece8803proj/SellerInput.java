@@ -13,6 +13,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by Suoemi on 3/22/2017.
  */
@@ -26,6 +29,7 @@ public class SellerInput extends AppCompatActivity {
     public SharedPreferences savedamt;
     public SharedPreferences savedprice;
 
+    private Map<String, Object> map;
     private FirebaseAuth mAuth;
     private FirebaseUser muser;
     private DatabaseReference databaseref;
@@ -41,6 +45,8 @@ public class SellerInput extends AppCompatActivity {
 
         this.savedamt = getSharedPreferences("amount", MODE_PRIVATE);
         this.savedprice = getSharedPreferences("price", MODE_PRIVATE);
+
+        map = new HashMap<String, Object>();
         databaseref = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
         muser = mAuth.getCurrentUser();
@@ -66,10 +72,12 @@ public class SellerInput extends AppCompatActivity {
                 savedprice.edit().commit();
 
                 if(selleramt.length()!=0) {
-                    databaseref.child("sellers").child(muser.getUid()).child("bid amount").setValue(selleramt);
+                    map.put("bid amount", selleramt);
+                    databaseref.child("sellers").child(muser.getUid()).updateChildren(map);
                 }
                 if(sellerprice.length()!=0) {
-                    databaseref.child("sellers").child(muser.getUid()).child("bid price").setValue(sellerprice);
+                    map.put("bid price", sellerprice);
+                    databaseref.child("sellers").child(muser.getUid()).updateChildren(map);
                 }
 
                 Intent mIntent = new Intent(SellerInput.this, SellerMain.class);
