@@ -113,6 +113,8 @@ public class SignupActivity extends AppCompatActivity {
 
                                            map.put("username", dbusr);
                                            map.put("email", task.getResult().getUser().getEmail());
+                                           map.put("join", "0");
+                                           map.put("min", "0");
 
                                            databaseref.child("sellers").child(task.getResult().getUser().getUid()).updateChildren(map);
 
@@ -142,6 +144,8 @@ public class SignupActivity extends AppCompatActivity {
                                        if (task.isSuccessful()) {
                                            map.put("username", dbusr);
                                            map.put("email", task.getResult().getUser().getEmail());
+                                           map.put("join", "0");
+                                           map.put("min", "0");
 
                                            databaseref.child("ev drivers").child(task.getResult().getUser().getUid()).updateChildren(map);
 

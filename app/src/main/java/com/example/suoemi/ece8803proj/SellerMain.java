@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -95,13 +96,14 @@ public class SellerMain extends AppCompatActivity {
         databaseref = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
         muser = mAuth.getCurrentUser();
-        usr_sell = new HashMap<String, Object>();
-        usr_buy = new HashMap<String, Object>();
-        allsell = new ArrayList<>();
-        allbuy = new ArrayList<>();
+        allsell = new ArrayList<String>();
+        allbuy = new ArrayList<String>();
+
+        evreq = new ArrayList<>();
         bidamt = new ArrayList<>();
         bidpr = new ArrayList<>();
-        evreq = new ArrayList<>();
+
+        String prevact = getIntent().getStringExtra("FROM_ACTIVITY");
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -136,7 +138,6 @@ public class SellerMain extends AppCompatActivity {
         tabLay.addView(tr, new TableLayout.LayoutParams(
                 TableRow.LayoutParams.FILL_PARENT,
                 TableRow.LayoutParams.WRAP_CONTENT));
-
 
 
         ValueEventListener checklist = new ValueEventListener() {
@@ -180,115 +181,183 @@ public class SellerMain extends AppCompatActivity {
                                     }
                                     databaseref.child("sellers").child(muser.getUid()).child("min").setValue("1");
 
-                                    ValueEventListener joinlist = new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                            // Get Post object and use the values to update the UI
-                                            usr_sell = (Map<String, Object>) dataSnapshot.getValue();
-
-                                            for(Map.Entry<String, Object> entry : usr_sell.entrySet())
-                                            {
-                                                Map singlesell = (Map) entry.getValue();
-                                                allsell.add((String) singlesell.get(String.class));
-
-                                                bidamt.add(Double.valueOf((String)singlesell.get("bid amount")));
-                                                bidpr.add(Double.valueOf((String)singlesell.get("bid price")));
-                                            }
-
-                                            ValueEventListener joinlist2 = new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                                    Log.d(TAG, "Seller username list: " + allsell);
-                                                    usr_buy = (Map<String, Object>) dataSnapshot.getValue();
-                                                    LPOptimizationRequest or = new LPOptimizationRequest();
-
-                                                    for (Map.Entry<String, Object> entry : usr_buy.entrySet()) {
-                                                        Map singlebuy = (Map) entry.getValue();
-                                                        allbuy.add((String) singlebuy.get("username"));
-                                                        evreq.add(Double.valueOf((String)singlebuy.get("ev req")));
-                                                    }
-                                                    Log.d(TAG, "Buyer username list: " + allbuy);
-
-                                                    c = new double[bidpr.size()];
-                                                    for (int i = 0; i<c.length; i++)
-                                                    {
-                                                        c[i] = bidpr.get(i).doubleValue();
-                                                        System.out.print("Price" + c);
-                                                    }
-
-                                                    double[][] A = new double[][] {{1, 1, 1}};
-
-                                                    B = new double[evreq.size()];
-                                                    for (int i = 0; i<B.length; i++)
-                                                    {
-                                                        B[i] = evreq.get(i).doubleValue();
-                                                    }
-
-                                                    double[] lb = new double[] {0, 0, 0};
-
-                                                    ub = new double[bidamt.size()];
-                                                    for (int i = 0; i<ub.length; i++)
-                                                    {
-                                                        ub[i] = bidamt.get(i).doubleValue();
-                                                    }
-
-                                                    or.setC(c);
-                                                    or.setA(A);
-                                                    or.setB(B);
-                                                    or.setLb(lb);
-                                                    or.setUb(ub);
-                                                    or.setDumpProblem(true);
-
-                                                    //optimization
-                                                    LPPrimalDualMethod opt = new LPPrimalDualMethod();
-
-                                                    opt.setLPOptimizationRequest(or);
-                                                    try {
-                                                        returnCode = opt.optimize();
-                                                        assertEquals("success ", OptimizationResponse.SUCCESS, returnCode);
-                                                        sol = opt.getOptimizationResponse().getSolution();
-                                                        String log = "Solution: " + Arrays.toString(sol);
-                                                        Log.d("Solution:: ", log);
-                                                    }
-                                                    catch (Exception e)
-                                                    {
-                                                        fail(e.toString());
-                                                    }
-
-                                                    for(int i = 0; i < sol.length; i++)
-                                                    {
-                                                        outp += sol[i];
-                                                        outa += ub[i];
-                                                    }
-
-                                                }
-
-                                                @Override
-                                                public void onCancelled(DatabaseError databaseError) {
-                                                    // Getting Post failed, log a message
-                                                    Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                                                    // ...
-                                                }
-                                            };
-                                            databaseref.child("ev drivers").addValueEventListener(joinlist2);
-                                        }
-
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
-                                            // Getting Post failed, log a message
-                                            Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                                            // ...
-                                        }
-                                    };
-                                    databaseref.child("sellers").addValueEventListener(joinlist);
-
                                 }
                             })
-                            .setNegativeButton("No", null)                        //Do nothing on no
+                            .setNegativeButton("No", new DialogInterface.OnClickListener(){
+                                public void onClick(DialogInterface dialog, int which){
+
+                                    databaseref.child("sellers").child(muser.getUid()).child("join").setValue("0");
+                                    databaseref.child("sellers").child(muser.getUid()).child("min").setValue("0");
+                                }
+                            })
                             .show();
+                }
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        };
+        databaseref.child("sellers").child(muser.getUid()).child("join").addValueEventListener(checklist);
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ValueEventListener checklist2 = new ValueEventListener() {
+            @Override
+            public void onDataChange(final DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue(String.class).equals("1")) {
+                    ValueEventListener joinlist = new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            // Get Post object and use the values to update the UI
+
+                            usr_sell = new HashMap<String, Object>();
+                            usr_sell = (Map<String, Object>) dataSnapshot.getValue();
+                            Log.d(TAG, "Seller size : " + usr_sell.size());
+
+
+                            for (Map.Entry<String, Object> entry : usr_sell.entrySet()) {
+                                Map singlesell =(Map) entry.getValue();
+
+                                allsell.add((String) singlesell.get("username"));
+
+                                bidamt.add(Double.valueOf((String) singlesell.get("bid amount")));
+                                Log.d(TAG, "Other size : " + bidamt.size());
+
+                                bidpr.add(Double.valueOf((String) singlesell.get("bid price")));
+                            }
+
+                            ValueEventListener joinlist2 = new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    Log.d(TAG, "Seller username list: " + allsell);
+                                    usr_buy = new HashMap<String, Object>();
+                                    usr_buy = (Map<String, Object>) dataSnapshot.getValue();
+                                    LPOptimizationRequest or = new LPOptimizationRequest();
+
+                                    for (Map.Entry<String, Object> entry : usr_buy.entrySet()) {
+                                        Map singlebuy = (Map) entry.getValue();
+
+                                        allbuy.add((String) singlebuy.get("username"));
+                                        evreq.add(Double.valueOf((String) singlebuy.get("ev req")));
+                                    }
+                                    Log.d(TAG, "Buyer username list: " + allbuy);
+
+                                    c = new double[usr_sell.size()];
+                                    for (int i = 0; i < c.length; i++) {
+                                        c[i] = bidpr.get(i).doubleValue();
+                                        System.out.print("Price" + c);
+                                    }
+
+                                    double[][] A = new double[][]{{1, 1, 1}};
+
+                                    B = new double[usr_buy.size()];
+                                    for (int i = 0; i < B.length; i++) {
+                                        B[i] = evreq.get(i).doubleValue();
+                                    }
+
+                                    double[] lb = new double[]{0, 0, 0};
+
+                                    ub = new double[usr_sell.size()];
+                                    for (int i = 0; i < ub.length; i++) {
+                                        ub[i] = bidamt.get(i).doubleValue();
+                                    }
+
+                                    or.setC(c);
+                                    or.setA(A);
+                                    or.setB(B);
+                                    or.setLb(lb);
+                                    or.setUb(ub);
+                                    or.setDumpProblem(true);
+
+                                    //optimization
+                                    LPPrimalDualMethod opt = new LPPrimalDualMethod();
+
+                                    opt.setLPOptimizationRequest(or);
+                                    try {
+                                        returnCode = opt.optimize();
+                                        assertEquals("success ", OptimizationResponse.SUCCESS, returnCode);
+                                        sol = opt.getOptimizationResponse().getSolution();
+                                        String log = "Solution: " + Arrays.toString(sol);
+                                        Log.d("Solution:: ", log);
+                                    } catch (Exception e) {
+                                        fail(e.toString());
+                                    }
+
+                                    for (int i = 0; i < sol.length; i++) {
+                                        outa += sol[i];
+                                        outp += c[i]*sol[i];
+                                    }
+                                    Log.d(TAG, "Output after: " + outa);
+
+                                    TableLayout tabLay = (TableLayout) findViewById(R.id.tableinfosell);
+                                    RelativeLayout relLay = (RelativeLayout) findViewById(R.id.relsell);
+
+                                    for (int i = 0; i < sol.length; i++) {
+                                        tr = new TableRow(SellerMain.this);
+                                        tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+
+                                        sellusr = new TextView(SellerMain.this);
+                                        sellamt = new TextView(SellerMain.this);
+
+                                        sellusr.setText("Seller " + (i+1) + " Initial Amt: " + ub[i]);
+                                        sellusr.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                                        tr.addView(sellusr);
+
+                                        sellamt.setText(Double.toString(Math.round(sol[i])));
+                                        sellamt.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                                        tr.addView(sellamt);
+
+                                        tabLay.addView(tr, new TableLayout.LayoutParams(
+                                                TableRow.LayoutParams.FILL_PARENT,
+                                                TableRow.LayoutParams.WRAP_CONTENT));
+                                    }
+
+                                    TableRow.LayoutParams params1 = new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT);
+                                    params1.setMargins(30, 100, 10, 10);
+                                    params1.span = 2;
+
+                                    buytot = new TextView(SellerMain.this);
+                                    pricetot = new TextView(SellerMain.this);
+                                    buytot.setLayoutParams(params1);
+                                    pricetot.setLayoutParams(params1);
+
+                                    buytot.setText("EV driver total amount: " + outa);
+                                    buytot.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                                    pricetot.setText("EV driver total cost: " + outp);
+                                    pricetot.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+
+                                    tabLay.addView(buytot);
+                                    tabLay.addView(pricetot);
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    // Getting Post failed, log a message
+                                    Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                                    // ...
+                                }
+                            };
+                            databaseref.child("ev drivers").addValueEventListener(joinlist2);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            // Getting Post failed, log a message
+                            Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                            // ...
+                        }
+                    };
+                    databaseref.child("sellers").addValueEventListener(joinlist);
 
                     btn.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
+                            databaseref.child("sellers").child(muser.getUid()).child("join").setValue("0");
+                            databaseref.child("sellers").child(muser.getUid()).child("min").setValue("0");
                             Intent mIntent = new Intent(SellerMain.this, SellerInput.class);
                             startActivity(mIntent);
                         }
@@ -325,41 +394,40 @@ public class SellerMain extends AppCompatActivity {
                         }
                     });
 
-                    ValueEventListener postListener = new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            // Get Post object and use the values to update the UI
-                            String ebid = dataSnapshot.getValue(String.class);
-                            btn.setText(ebid);
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            // Getting Post failed, log a message
-                            Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                            // ...
-                        }
-                    };
-                    ValueEventListener postListener2 = new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            // Get Post object and use the values to update the UI
-                            String eprice = dataSnapshot.getValue(String.class);
-                            btn2.setText(eprice);
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            // Getting Post failed, log a message
-                            Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                            // ...
-                        }
-                    };
-                    databaseref.child("sellers").child(muser.getUid()).child("bid amount").addValueEventListener(postListener);
-                    databaseref.child("sellers").child(muser.getUid()).child("bid price").addValueEventListener(postListener2);
+//                    ValueEventListener postListener = new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(DataSnapshot dataSnapshot) {
+//                            // Get Post object and use the values to update the UI
+//                            String ebid = dataSnapshot.getValue(String.class);
+//                            btn.setText(ebid);
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(DatabaseError databaseError) {
+//                            // Getting Post failed, log a message
+//                            Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+//                            // ...
+//                        }
+//                    };
+//                    ValueEventListener postListener2 = new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(DataSnapshot dataSnapshot) {
+//                            // Get Post object and use the values to update the UI
+//                            String eprice = dataSnapshot.getValue(String.class);
+//                            btn2.setText(eprice);
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(DatabaseError databaseError) {
+//                            // Getting Post failed, log a message
+//                            Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+//                            // ...
+//                        }
+//                    };
+//                    databaseref.child("sellers").child(muser.getUid()).child("bid amount").addValueEventListener(postListener);
+//                    databaseref.child("sellers").child(muser.getUid()).child("bid price").addValueEventListener(postListener2);
                 }
             }
-
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -368,7 +436,85 @@ public class SellerMain extends AppCompatActivity {
                 // ...
             }
         };
-        databaseref.child("sellers").child(muser.getUid()).child("join").addValueEventListener(checklist);
+        databaseref.child("sellers").child(muser.getUid()).child("min").addValueEventListener(checklist2);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        if (prevact == "SellerInput") {
+            Log.d(TAG, "From Input");
+            btn.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    databaseref.child("sellers").child(muser.getUid()).child("join").setValue("0");
+                    databaseref.child("sellers").child(muser.getUid()).child("min").setValue("0");
+                    Intent mIntent = new Intent(SellerMain.this, SellerInput.class);
+                    startActivity(mIntent);
+                }
+            });
+
+            btn2.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent mIntent = new Intent(SellerMain.this, SellerInput.class);
+                    startActivity(mIntent);
+                }
+            });
+
+            btn3.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent mIntent = new Intent(SellerMain.this, SellerProfile.class);
+                    startActivity(mIntent);
+                }
+            });
+
+            btn4.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    databaseref.child("sellers").child(muser.getUid()).child("join").setValue("0");
+                    databaseref.child("sellers").child(muser.getUid()).child("min").setValue("0");
+                    mAuth.signOut();
+                    Intent mIntent = new Intent(SellerMain.this, LoginActivity.class);
+                    startActivity(mIntent);
+                }
+            });
+
+            btn5.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent mIntent = new Intent(SellerMain.this, Output.class);
+                    startActivity(mIntent);
+                }
+            });
+
+            ValueEventListener postListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // Get Post object and use the values to update the UI
+                    String ebid = dataSnapshot.getValue(String.class);
+                    btn.setText(ebid);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // Getting Post failed, log a message
+                    Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                    // ...
+                }
+            };
+            ValueEventListener postListener2 = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // Get Post object and use the values to update the UI
+                    String eprice = dataSnapshot.getValue(String.class);
+                    btn2.setText(eprice);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // Getting Post failed, log a message
+                    Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                    // ...
+                }
+            };
+
+            databaseref.child("sellers").child(muser.getUid()).child("bid amount").addValueEventListener(postListener);
+            databaseref.child("sellers").child(muser.getUid()).child("bid price").addValueEventListener(postListener2);
+        }
 
         btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -441,6 +587,7 @@ public class SellerMain extends AppCompatActivity {
 
         databaseref.child("sellers").child(muser.getUid()).child("bid amount").addValueEventListener(postListener);
         databaseref.child("sellers").child(muser.getUid()).child("bid price").addValueEventListener(postListener2);
+
     }
 
     @Override
