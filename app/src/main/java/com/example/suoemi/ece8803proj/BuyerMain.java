@@ -32,6 +32,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -139,6 +140,36 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
                 TableRow.LayoutParams.FILL_PARENT,
                 TableRow.LayoutParams.WRAP_CONTENT));
 
+        ValueEventListener joinlist = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get Post object and use the values to update the UI
+                ArrayList<String> allusr = new ArrayList<String>();
+                usr_sell = new HashMap<String, Object>();
+                usr_sell = (Map<String, Object>) dataSnapshot.getValue();
+
+                for(Map.Entry<String, Object> entry : usr_sell.entrySet())
+                {
+                    Map singlesell = (Map) entry.getValue();
+                    //allsell.add((String) singlesell.get("username"));
+                    allusr.add(entry.getKey());
+                }
+                for(int i = 0; i<allusr.size(); i++)
+                {
+                    Log.d(TAG, "array list for seller: " + allusr.get(i));
+                    databaseref.child("sellers").child(allusr.get(i)).child("join").setValue("0");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        };
+        databaseref.child("sellers").addValueEventListener(joinlist);
+
         btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 databaseref.child("ev drivers").child(muser.getUid()).child("join").setValue("1");
@@ -147,6 +178,7 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // Get Post object and use the values to update the UI
                         ArrayList<String> allusr = new ArrayList<String>();
+                        usr_sell = new HashMap<String, Object>();
                         usr_sell = (Map<String, Object>) dataSnapshot.getValue();
 
                         for(Map.Entry<String, Object> entry : usr_sell.entrySet())
@@ -158,13 +190,14 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
                         for(int i = 0; i<allusr.size(); i++)
                         {
                             Log.d(TAG, "array list for seller: " + allusr.get(i));
-                            databaseref.child("sellers").child(allusr.get(i)).child("join").setValue("0");
+                            databaseref.child("sellers").child(allusr.get(i)).child("join").setValue("1");
                         }
 
                         ValueEventListener joinlist2 = new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 //Log.d(TAG, "usr_sell: " + allsell);
+                                usr_buy = new HashMap<String, Object>();
                                 usr_buy = (Map<String, Object>) dataSnapshot.getValue();
 
                                 for (Map.Entry<String, Object> entry : usr_buy.entrySet()) {

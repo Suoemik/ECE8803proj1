@@ -110,7 +110,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                     if (task.isSuccessful()) {
                                         Intent mIntent = new Intent(LoginActivity.this, SellerMain.class);
-                                        mIntent.putExtra("FROM_ACTIVITY", "SignupActivity");
+                                        mIntent.putExtra("FROM_ACTIVITY", "LoginActivity");
                                         startActivity(mIntent);
                                         finish();
                                     } else {
@@ -139,7 +139,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                     if (task.isSuccessful()) {
                                         Intent mIntent = new Intent(LoginActivity.this, BuyerMain.class);
-                                        mIntent.putExtra("FROM_ACTIVITY", "SignupActivity");
+                                        mIntent.putExtra("FROM_ACTIVITY", "LoginActivity");
                                         startActivity(mIntent);
                                         finish();
                                     } else {
