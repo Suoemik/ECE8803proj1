@@ -156,35 +156,6 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
                 TableRow.LayoutParams.FILL_PARENT,
                 TableRow.LayoutParams.WRAP_CONTENT));
 
-        ValueEventListener joinlist = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Post object and use the values to update the UI
-                ArrayList<String> allusr = new ArrayList<String>();
-                usr_sell = new HashMap<String, Object>();
-                usr_sell = (Map<String, Object>) dataSnapshot.getValue();
-
-                for(Map.Entry<String, Object> entry : usr_sell.entrySet())
-                {
-                    Map singlesell = (Map) entry.getValue();
-                    //allsell.add((String) singlesell.get("username"));
-                    allusr.add(entry.getKey());
-                }
-                for(int i = 0; i<allusr.size(); i++)
-                {
-                    Log.d(TAG, "array list for seller: " + allusr.get(i));
-                    databaseref.child("sellers").child(allusr.get(i)).child("join").setValue("0");
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                // ...
-            }
-        };
-        databaseref.child("sellers").addValueEventListener(joinlist);
 
         btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -287,173 +258,193 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
         ValueEventListener checklist2 = new ValueEventListener() {
             @Override
             public void onDataChange(final DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue(String.class).equals("1")) {
-                    ValueEventListener joinlist = new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            // Get Post object and use the values to update the UI
+                ArrayList<String> allusr = new ArrayList<String>();
+                ArrayList<String> newarr = new ArrayList<String>();
 
-                            usr_sell = new HashMap<String, Object>();
-                            usr_sell = (Map<String, Object>) dataSnapshot.getValue();
-                            Log.d(TAG, "Seller size : " + usr_sell.size());
+                usr_sell = new HashMap<String, Object>();
+                usr_sell = (Map<String, Object>) dataSnapshot.getValue();
+
+                for (Map.Entry<String, Object> entry : usr_sell.entrySet()) {
+                    Map singlesell = (Map) entry.getValue();
+                    //allsell.add((String) singlesell.get("username"));
+                    newarr.add((String) singlesell.get("join"));
+                    allusr.add(entry.getKey());
+                }
+                for (int i = 0; i < allusr.size(); i++) {
+                    Log.d(TAG, "array list for seller: " + allusr.get(i));
+                    databaseref.child("sellers").child(allusr.get(i)).child("join").setValue("1");
+                }
+
+                for(int i = 0; i<allusr.size(); i++) {
+                    if (newarr.get(i).equals("1")) {
+                        ValueEventListener joinlist = new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                // Get Post object and use the values to update the UI
+
+                                usr_sell = new HashMap<String, Object>();
+                                usr_sell = (Map<String, Object>) dataSnapshot.getValue();
+                                Log.d(TAG, "Seller size : " + usr_sell.size());
 
 
-                            for (Map.Entry<String, Object> entry : usr_sell.entrySet()) {
-                                Map singlesell =(Map) entry.getValue();
+                                for (Map.Entry<String, Object> entry : usr_sell.entrySet()) {
+                                    Map singlesell = (Map) entry.getValue();
 
-                                allsell.add((String) singlesell.get("username"));
+                                    allsell.add((String) singlesell.get("username"));
 
-                                bidamt.add(Double.valueOf((String) singlesell.get("bid amount")));
-                                Log.d(TAG, "Other size : " + bidamt.size());
+                                    bidamt.add(Double.valueOf((String) singlesell.get("bid amount")));
+                                    Log.d(TAG, "Other size : " + bidamt.size());
 
-                                bidpr.add(Double.valueOf((String) singlesell.get("bid price")));
+                                    bidpr.add(Double.valueOf((String) singlesell.get("bid price")));
+                                }
+
+                                ValueEventListener joinlist2 = new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        Log.d(TAG, "Seller username list: " + allsell);
+                                        usr_buy = new HashMap<String, Object>();
+                                        usr_buy = (Map<String, Object>) dataSnapshot.getValue();
+                                        LPOptimizationRequest or = new LPOptimizationRequest();
+
+                                        for (Map.Entry<String, Object> entry : usr_buy.entrySet()) {
+                                            Map singlebuy = (Map) entry.getValue();
+
+                                            allbuy.add((String) singlebuy.get("username"));
+                                            evreq.add(Double.valueOf((String) singlebuy.get("ev req")));
+                                        }
+                                        Log.d(TAG, "Buyer username list: " + allbuy);
+
+                                        c = new double[usr_sell.size()];
+                                        for (int i = 0; i < c.length; i++) {
+                                            c[i] = bidpr.get(i).doubleValue();
+                                            System.out.print("Price" + c);
+                                        }
+
+                                        double[][] A = new double[][]{{1, 1, 1}};
+
+                                        B = new double[usr_buy.size()];
+                                        for (int i = 0; i < B.length; i++) {
+                                            B[i] = evreq.get(i).doubleValue();
+                                        }
+
+                                        double[] lb = new double[]{0, 0, 0};
+
+                                        ub = new double[usr_sell.size()];
+                                        for (int i = 0; i < ub.length; i++) {
+                                            ub[i] = bidamt.get(i).doubleValue();
+                                        }
+
+                                        or.setC(c);
+                                        or.setA(A);
+                                        or.setB(B);
+                                        or.setLb(lb);
+                                        or.setUb(ub);
+                                        or.setDumpProblem(true);
+
+                                        //optimization
+                                        LPPrimalDualMethod opt = new LPPrimalDualMethod();
+
+                                        opt.setLPOptimizationRequest(or);
+                                        try {
+                                            returnCode = opt.optimize();
+                                            assertEquals("success ", OptimizationResponse.SUCCESS, returnCode);
+                                            sol = opt.getOptimizationResponse().getSolution();
+                                            String log = "Solution: " + Arrays.toString(sol);
+                                            Log.d("Solution:: ", log);
+                                        } catch (Exception e) {
+                                            fail(e.toString());
+                                        }
+
+                                        for (int i = 0; i < sol.length; i++) {
+                                            outa += sol[i];
+                                            outp += c[i] * sol[i];
+                                        }
+                                        Log.d(TAG, "Output after: " + outa);
+
+                                        TableLayout tabLay = (TableLayout) findViewById(R.id.tableinfobuy);
+                                        RelativeLayout relLay = (RelativeLayout) findViewById(R.id.relbuy);
+
+                                        for (int i = 0; i < sol.length; i++) {
+                                            tr = new TableRow(BuyerMain.this);
+                                            tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+
+                                            sellusr = new TextView(BuyerMain.this);
+                                            sellamt = new TextView(BuyerMain.this);
+
+                                            sellusr.setText("Seller " + (i + 1) + " Initial Amt: " + ub[i]);
+                                            sellusr.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                                            tr.addView(sellusr);
+
+                                            sellamt.setText(Double.toString(Math.round(sol[i])));
+                                            sellamt.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                                            tr.addView(sellamt);
+
+                                            tabLay.addView(tr, new TableLayout.LayoutParams(
+                                                    TableRow.LayoutParams.FILL_PARENT,
+                                                    TableRow.LayoutParams.WRAP_CONTENT));
+                                        }
+
+                                        TableRow.LayoutParams params1 = new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT);
+                                        params1.setMargins(30, 100, 10, 10);
+                                        params1.span = 2;
+
+                                        buytot = new TextView(BuyerMain.this);
+                                        pricetot = new TextView(BuyerMain.this);
+                                        buytot.setLayoutParams(params1);
+                                        pricetot.setLayoutParams(params1);
+
+                                        buytot.setText("EV driver total amount: " + outa);
+                                        buytot.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                                        pricetot.setText("EV driver total cost: " + outp);
+                                        pricetot.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+
+                                        tabLay.addView(buytot);
+                                        tabLay.addView(pricetot);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        // Getting Post failed, log a message
+                                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                                        // ...
+                                    }
+                                };
+                                databaseref.child("ev drivers").addValueEventListener(joinlist2);
                             }
 
-                            ValueEventListener joinlist2 = new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    Log.d(TAG, "Seller username list: " + allsell);
-                                    usr_buy = new HashMap<String, Object>();
-                                    usr_buy = (Map<String, Object>) dataSnapshot.getValue();
-                                    LPOptimizationRequest or = new LPOptimizationRequest();
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                // Getting Post failed, log a message
+                                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                                // ...
+                            }
+                        };
+                        databaseref.child("sellers").addValueEventListener(joinlist);
 
-                                    for (Map.Entry<String, Object> entry : usr_buy.entrySet()) {
-                                        Map singlebuy = (Map) entry.getValue();
+                        btn3.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View v) {
+                                startActivity(new Intent(BuyerMain.this, BuyerProfile.class));
+                            }
+                        });
 
-                                        allbuy.add((String) singlebuy.get("username"));
-                                        evreq.add(Double.valueOf((String) singlebuy.get("ev req")));
-                                    }
-                                    Log.d(TAG, "Buyer username list: " + allbuy);
+                        btn4.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                databaseref.child("ev drivers").child(muser.getUid()).child("join").setValue("0");
+                                mAuth.signOut();
+                                startActivity(new Intent(BuyerMain.this, LoginActivity.class));
+                            }
+                        });
 
-                                    c = new double[usr_sell.size()];
-                                    for (int i = 0; i < c.length; i++) {
-                                        c[i] = bidpr.get(i).doubleValue();
-                                        System.out.print("Price" + c);
-                                    }
-
-                                    double[][] A = new double[][]{{1, 1, 1}};
-
-                                    B = new double[usr_buy.size()];
-                                    for (int i = 0; i < B.length; i++) {
-                                        B[i] = evreq.get(i).doubleValue();
-                                    }
-
-                                    double[] lb = new double[]{0, 0, 0};
-
-                                    ub = new double[usr_sell.size()];
-                                    for (int i = 0; i < ub.length; i++) {
-                                        ub[i] = bidamt.get(i).doubleValue();
-                                    }
-
-                                    or.setC(c);
-                                    or.setA(A);
-                                    or.setB(B);
-                                    or.setLb(lb);
-                                    or.setUb(ub);
-                                    or.setDumpProblem(true);
-
-                                    //optimization
-                                    LPPrimalDualMethod opt = new LPPrimalDualMethod();
-
-                                    opt.setLPOptimizationRequest(or);
-                                    try {
-                                        returnCode = opt.optimize();
-                                        assertEquals("success ", OptimizationResponse.SUCCESS, returnCode);
-                                        sol = opt.getOptimizationResponse().getSolution();
-                                        String log = "Solution: " + Arrays.toString(sol);
-                                        Log.d("Solution:: ", log);
-                                    } catch (Exception e) {
-                                        fail(e.toString());
-                                    }
-
-                                    for (int i = 0; i < sol.length; i++) {
-                                        outa += sol[i];
-                                        outp += c[i]*sol[i];
-                                    }
-                                    Log.d(TAG, "Output after: " + outa);
-
-                                    TableLayout tabLay = (TableLayout) findViewById(R.id.tableinfosell);
-                                    RelativeLayout relLay = (RelativeLayout) findViewById(R.id.relsell);
-
-                                    for (int i = 0; i < sol.length; i++) {
-                                        tr = new TableRow(BuyerMain.this);
-                                        tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-
-                                        sellusr = new TextView(BuyerMain.this);
-                                        sellamt = new TextView(BuyerMain.this);
-
-                                        sellusr.setText("Seller " + (i+1) + " Initial Amt: " + ub[i]);
-                                        sellusr.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                                        tr.addView(sellusr);
-
-                                        sellamt.setText(Double.toString(Math.round(sol[i])));
-                                        sellamt.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                                        tr.addView(sellamt);
-
-                                        tabLay.addView(tr, new TableLayout.LayoutParams(
-                                                TableRow.LayoutParams.FILL_PARENT,
-                                                TableRow.LayoutParams.WRAP_CONTENT));
-                                    }
-
-                                    TableRow.LayoutParams params1 = new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT);
-                                    params1.setMargins(30, 100, 10, 10);
-                                    params1.span = 2;
-
-                                    buytot = new TextView(BuyerMain.this);
-                                    pricetot = new TextView(BuyerMain.this);
-                                    buytot.setLayoutParams(params1);
-                                    pricetot.setLayoutParams(params1);
-
-                                    buytot.setText("EV driver total amount: " + outa);
-                                    buytot.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                                    pricetot.setText("EV driver total cost: " + outp);
-                                    pricetot.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-
-                                    tabLay.addView(buytot);
-                                    tabLay.addView(pricetot);
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                    // Getting Post failed, log a message
-                                    Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                                    // ...
-                                }
-                            };
-                            databaseref.child("ev drivers").addValueEventListener(joinlist2);
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            // Getting Post failed, log a message
-                            Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                            // ...
-                        }
-                    };
-                    databaseref.child("sellers").addValueEventListener(joinlist);
-
-                    btn3.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            startActivity(new Intent(BuyerMain.this, BuyerProfile.class));
-                        }
-                    });
-
-                    btn4.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            databaseref.child("ev drivers").child(muser.getUid()).child("join").setValue("0");
-                            mAuth.signOut();
-                            startActivity(new Intent(BuyerMain.this, LoginActivity.class));
-                        }
-                    });
-
-                    btn2.setOnClickListener(new View.OnClickListener(){
-                        public void onClick(View v) {
-                            Intent mIntent = new Intent(BuyerMain.this, BuyerInput.class);
-                            mIntent.putExtra("FROM_ACTIVITY", "BuyerMain");
-                            startActivity(mIntent);
-                        }
-                    });
+                        btn2.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View v) {
+                                Intent mIntent = new Intent(BuyerMain.this, BuyerInput.class);
+                                mIntent.putExtra("FROM_ACTIVITY", "BuyerMain");
+                                startActivity(mIntent);
+                            }
+                        });
+                    }
                 }
             }
 
@@ -464,7 +455,7 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
                 // ...
             }
         };
-        databaseref.child("sellers").child(muser.getUid()).child("min").addValueEventListener(checklist2);
+        databaseref.child("sellers").addValueEventListener(checklist2);
 
         buildGoogleApiClient();
     }
