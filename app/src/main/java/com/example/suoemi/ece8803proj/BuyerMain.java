@@ -121,7 +121,7 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
         };
         mAuth.addAuthStateListener(mAuthListener);
 
-        TableLayout tabLay = (TableLayout) findViewById(R.id.tableinfosell);
+        TableLayout tabLay = (TableLayout) findViewById(R.id.tableinfobuy);
         title = new TextView(this);
         tr = new TableRow(this);
 
