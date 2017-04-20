@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
@@ -72,6 +73,7 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
     private Button btn2;
     private Button btn3;
     private Button btn4;
+    private Button mSeekBar;
 
     private TextView sellusr;
     private TextView sellamt;
@@ -91,6 +93,8 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
     private FirebaseUser muser;
     private DatabaseReference databaseref;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private ArrayBlockingQueue<Integer> mQueue;
+
     private static final String TAG = "BuyerMain";
 
     @Override
@@ -109,7 +113,9 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
         evreq = new ArrayList<>();
         bidamt = new ArrayList<>();
         bidpr = new ArrayList<>();
+        mQueue = new ArrayBlockingQueue<Integer>(100);
 
+        mSeekBar = (Button) findViewById(R.id.ardbtn);
         databaseref = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
         muser = mAuth.getCurrentUser();
@@ -179,29 +185,6 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
                             Log.d(TAG, "array list for seller: " + allusr.get(i));
                             databaseref.child("sellers").child(allusr.get(i)).child("join").setValue("1");
                         }
-
-                        ValueEventListener joinlist2 = new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                //Log.d(TAG, "usr_sell: " + allsell);
-                                usr_buy = new HashMap<String, Object>();
-                                usr_buy = (Map<String, Object>) dataSnapshot.getValue();
-
-                                for (Map.Entry<String, Object> entry : usr_buy.entrySet()) {
-                                    Map singlebuy = (Map) entry.getValue();
-                                    allbuy.add((String) singlebuy.get("username"));
-                                }
-                                Log.d(TAG, "usr_buy: " + allbuy);
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                // Getting Post failed, log a message
-                                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                                // ...
-                            }
-                        };
-                        databaseref.child("ev drivers").addValueEventListener(joinlist2);
                     }
 
                     @Override
@@ -258,44 +241,30 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
         ValueEventListener checklist2 = new ValueEventListener() {
             @Override
             public void onDataChange(final DataSnapshot dataSnapshot) {
-                ArrayList<String> allusr = new ArrayList<String>();
-                ArrayList<String> newarr = new ArrayList<String>();
+                final ArrayList<String> allusr = new ArrayList<String>();
+                final ArrayList<String> newarr = new ArrayList<String>();
 
                 usr_sell = new HashMap<String, Object>();
                 usr_sell = (Map<String, Object>) dataSnapshot.getValue();
 
                 for (Map.Entry<String, Object> entry : usr_sell.entrySet()) {
                     Map singlesell = (Map) entry.getValue();
-                    //allsell.add((String) singlesell.get("username"));
+                    allsell.add((String) singlesell.get("username"));
                     newarr.add((String) singlesell.get("join"));
                     allusr.add(entry.getKey());
                 }
-                for (int i = 0; i < allusr.size(); i++) {
-                    Log.d(TAG, "array list for seller: " + allusr.get(i));
-                    databaseref.child("sellers").child(allusr.get(i)).child("join").setValue("1");
-                }
-
-                for(int i = 0; i<allusr.size(); i++) {
-                    if (newarr.get(i).equals("1")) {
-                        ValueEventListener joinlist = new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                // Get Post object and use the values to update the UI
-
-                                usr_sell = new HashMap<String, Object>();
-                                usr_sell = (Map<String, Object>) dataSnapshot.getValue();
-                                Log.d(TAG, "Seller size : " + usr_sell.size());
-
+//
+//                for(int i = 0; i<allusr.size(); i++) {
+//                    if (newarr.get(i).equals("1")) {
+//                        ValueEventListener joinlist = new ValueEventListener() {
+//                            @Override
+//                            public void onDataChange(DataSnapshot dataSnapshot) {
 
                                 for (Map.Entry<String, Object> entry : usr_sell.entrySet()) {
                                     Map singlesell = (Map) entry.getValue();
 
                                     allsell.add((String) singlesell.get("username"));
-
                                     bidamt.add(Double.valueOf((String) singlesell.get("bid amount")));
-                                    Log.d(TAG, "Other size : " + bidamt.size());
-
                                     bidpr.add(Double.valueOf((String) singlesell.get("bid price")));
                                 }
 
@@ -396,7 +365,7 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
 
                                         buytot.setText("EV driver total amount: " + outa);
                                         buytot.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                                        pricetot.setText("EV driver total cost: " + outp);
+                                        pricetot.setText("EV driver total cost: " + Math.round(outp));
                                         pricetot.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
                                         tabLay.addView(buytot);
@@ -411,16 +380,16 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
                                     }
                                 };
                                 databaseref.child("ev drivers").addValueEventListener(joinlist2);
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                // Getting Post failed, log a message
-                                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                                // ...
-                            }
-                        };
-                        databaseref.child("sellers").addValueEventListener(joinlist);
+//                            }
+//
+//                            @Override
+//                            public void onCancelled(DatabaseError databaseError) {
+//                                // Getting Post failed, log a message
+//                                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+//                                // ...
+//                            }
+////                        };
+//                        databaseref.child("sellers").addValueEventListener(joinlist);
 
                         btn3.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View v) {
@@ -444,8 +413,8 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
                                 startActivity(mIntent);
                             }
                         });
-                    }
-                }
+//                    }
+//                }
             }
 
             @Override

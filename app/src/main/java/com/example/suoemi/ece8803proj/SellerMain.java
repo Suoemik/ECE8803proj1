@@ -152,7 +152,7 @@ public class SellerMain extends AppCompatActivity {
                                 public void onClick(DialogInterface dialog, int which) {
                                     //Yes button clicked, do something
 
-                                    if (btn.getText().toString().equals(" ") || btn2.getText().toString().equals(" ")) {
+                                    if (btn.getText().toString().equals("0") || btn2.getText().toString().equals("0")) {
                                         AlertDialog.Builder builder2 = new AlertDialog.Builder(SellerMain.this);
                                         builder2
                                                 .setTitle("One or more of your input data is 0")
@@ -188,6 +188,8 @@ public class SellerMain extends AppCompatActivity {
 
                                     databaseref.child("sellers").child(muser.getUid()).child("join").setValue("0");
                                     databaseref.child("sellers").child(muser.getUid()).child("min").setValue("0");
+                                    databaseref.child("sellers").child(muser.getUid()).child("bid amount").setValue("0");
+                                    databaseref.child("sellers").child(muser.getUid()).child("bid price").setValue("0");
                                 }
                             })
                             .show();
@@ -356,8 +358,6 @@ public class SellerMain extends AppCompatActivity {
 
                     btn.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
-                            databaseref.child("sellers").child(muser.getUid()).child("join").setValue("0");
-                            databaseref.child("sellers").child(muser.getUid()).child("min").setValue("0");
                             Intent mIntent = new Intent(SellerMain.this, SellerInput.class);
                             startActivity(mIntent);
                         }
@@ -598,8 +598,18 @@ public class SellerMain extends AppCompatActivity {
     @Override
     public void onStop() {
         super.onStop();
+
+        databaseref.child("sellers").child(muser.getUid()).child("join").setValue("0");
+        databaseref.child("sellers").child(muser.getUid()).child("min").setValue("0");
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        databaseref.child("sellers").child(muser.getUid()).child("join").setValue("0");
+        databaseref.child("sellers").child(muser.getUid()).child("min").setValue("0");
     }
 }

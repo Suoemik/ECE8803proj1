@@ -105,8 +105,17 @@
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
                 android:stretchColumns="0,1"
-                android:layout_below="@+id/begin_btn">
+                android:layout_below="@+id/ardbtn">
             </TableLayout>
+
+            <Button
+                android:text="TRANSFER"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ardbtn"
+                android:layout_marginTop="32dp"
+                android:layout_below="@+id/begin_btn"
+                android:layout_centerHorizontal="true" />
 
         </RelativeLayout>
     </ScrollView>
