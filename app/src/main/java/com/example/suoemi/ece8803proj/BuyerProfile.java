@@ -41,11 +41,13 @@ public class BuyerProfile extends AppCompatActivity {
         final Button loc_btn = (Button) findViewById(R.id.bloc_btn);
         Button no_btn = (Button) findViewById(R.id.bphone_btn);
         Button pass_btn = (Button) findViewById(R.id.bpass_btn);
-        Button usr_btn = (Button) findViewById(R.id.busern_btn);
-        Button pmnt = (Button) findViewById(R.id.df_pyment_btn);
+        final Button usr_btn = (Button) findViewById(R.id.busern_btn);
+        final Button pmnt = (Button) findViewById(R.id.df_pyment_btn);
 
         logoutbtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                databaseref.child("ev drivers").child(muser.getUid()).child("join").setValue("0");
+                mAuth.signOut();
                 Intent mIntent = new Intent(BuyerProfile.this, LoginActivity.class);
                 startActivity(mIntent);
             }
@@ -114,6 +116,7 @@ public class BuyerProfile extends AppCompatActivity {
                             public void onClick(DialogInterface dialogBox, int id) {
                                 // ToDo get user input here
                                 String getusr = userInputDialogEditText.getText().toString();
+                                usr_btn.setText(userInputDialogEditText.getText().toString());
                                 databaseref.child("ev drivers").child(muser.getUid()).child("username").setValue(userInputDialogEditText.getText().toString());
                             }
                         })
@@ -132,6 +135,7 @@ public class BuyerProfile extends AppCompatActivity {
 
         pmnt.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                pmnt.setText("Debit Card");
                 Intent mIntent = new Intent(BuyerProfile.this, PaymentInput.class);
                 startActivity(mIntent);
             }

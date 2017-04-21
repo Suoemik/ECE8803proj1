@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * Created by Suoemi on 3/17/2017.
@@ -32,15 +33,24 @@ public class SellerProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.seller_prof);
 
+        databaseref = FirebaseDatabase.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
+        muser = mAuth.getCurrentUser();
+
         Button logoutbtn = (Button) findViewById(R.id.splogout_btn);
         Button mainbtn = (Button) findViewById(R.id.spmain_btn);
         locbtn = (Button) findViewById(R.id.sloc_btn);
-        Button usr = (Button) findViewById(R.id.susern_btn);
-        Button pno = (Button) findViewById(R.id.sphone_btn);
-        Button pmnt = (Button) findViewById(R.id.df_pyment_btn);
+        final Button usr = (Button) findViewById(R.id.susern_btn);
+        final Button pno = (Button) findViewById(R.id.sphone_btn);
+        final Button pmnt = (Button) findViewById(R.id.df_pyment_btn);
+        final Button pass = (Button) findViewById(R.id.spass_btn);
+        String prevact = getIntent().getStringExtra("FROM_ACTIVITY");
 
         logoutbtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                databaseref.child("sellers").child(muser.getUid()).child("join").setValue("0");
+                databaseref.child("sellers").child(muser.getUid()).child("min").setValue("0");
+                mAuth.signOut();
                 Intent mIntent = new Intent(SellerProfile.this, LoginActivity.class);
                 startActivity(mIntent);
             }
@@ -55,7 +65,9 @@ public class SellerProfile extends AppCompatActivity {
 
         pmnt.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                pmnt.setText("Paypal");
                 Intent mIntent = new Intent(SellerProfile.this, PaymentInput.class);
+                mIntent.putExtra("FROM_ACTIVITY", "SellerProfile");
                 startActivity(mIntent);
             }
         });
@@ -74,6 +86,7 @@ public class SellerProfile extends AppCompatActivity {
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogBox, int id) {
                                 // ToDo get user input here
+                                usr.setText(userInputDialogEditText.getText().toString());
                                 databaseref.child("sellers").child(muser.getUid()).child("username").setValue(userInputDialogEditText.getText().toString());
                             }
                         })
@@ -104,6 +117,7 @@ public class SellerProfile extends AppCompatActivity {
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogBox, int id) {
                                 // ToDo get user input here
+                                pno.setText(userInputDialogEditText.getText().toString());
                                 databaseref.child("sellers").child(muser.getUid()).child("phone number").setValue(userInputDialogEditText.getText().toString());
                             }
                         })

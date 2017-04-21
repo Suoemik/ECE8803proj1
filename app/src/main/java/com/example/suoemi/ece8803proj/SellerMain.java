@@ -332,7 +332,7 @@ public class SellerMain extends AppCompatActivity implements GoogleApiClient.OnC
                                             sellusr.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                                             tr.addView(sellusr);
 
-                                            sellamt.setText("Cala Amt: " + Double.toString(Math.round(sol[i])) + " kWh");
+                                            sellamt.setText("Final Amt: " + Double.toString(Math.round(sol[i])) + " kWh");
                                             sellamt.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                                             tr.addView(sellamt);
 
@@ -382,7 +382,7 @@ public class SellerMain extends AppCompatActivity implements GoogleApiClient.OnC
 //                                    };
 
                                         TableRow.LayoutParams params1 = new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT);
-                                        params1.setMargins(30, 100, 10, 10);
+                                        params1.setMargins(30, 100, 5, 10);
                                         params1.span = 2;
 
                                         buytot = new TextView(SellerMain.this);
@@ -666,6 +666,7 @@ public class SellerMain extends AppCompatActivity implements GoogleApiClient.OnC
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
+        mFetchAddressButton = (Button) findViewById(R.id.sell_loc);
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
         if (mLastLocation != null) {

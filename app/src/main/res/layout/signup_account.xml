@@ -3,36 +3,36 @@
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:background="#FFF2FEFF">
 
-    <TextView
-        android:text="Add Account Details"
+    <EditText
+        android:text="Add Paypal Details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/paymenttext"
+        android:id="@+id/sellpaymenttext"
         android:textSize="18sp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="66dp" />
 
     <Button
-        android:text="Skip"
+        android:text="Cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/button11"
-        android:layout_alignBaseline="@+id/button9"
-        android:layout_alignBottom="@+id/button9"
-        android:layout_alignStart="@+id/paymenttext"
+        android:id="@+id/sellacccanc"
+        android:layout_alignBaseline="@+id/sellaccadd"
+        android:layout_alignBottom="@+id/sellaccadd"
+        android:layout_alignStart="@+id/sellpaymenttext"
         android:layout_marginStart="87dp"
         android:background="@color/colorAccent"/>
 
     <Button
-        android:text="Ok"
+        android:text="Add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="39dp"
-        android:id="@+id/button9"
+        android:id="@+id/sellaccadd"
         android:layout_marginEnd="89dp"
-        android:layout_below="@+id/paymenttext"
-        android:layout_alignEnd="@+id/paymenttext"
+        android:layout_below="@+id/sellpaymenttext"
+        android:layout_alignEnd="@+id/sellpaymenttext"
         android:background="@color/colorAccent"/>
 
 </RelativeLayout>

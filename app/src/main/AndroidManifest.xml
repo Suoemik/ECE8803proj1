@@ -22,6 +22,7 @@
         <activity android:name=".SellerProfile"></activity>
         <activity android:name=".SellerInput"></activity>
         <activity android:name=".PaymentInput"></activity>
+        <activity android:name=".SellAccInput"></activity>
         <activity android:name=".BuyerInput"></activity>
         <activity android:name=".BuyerProfile"></activity>
         <activity android:name=".Output"></activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for

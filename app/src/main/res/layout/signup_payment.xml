@@ -7,7 +7,7 @@
         android:text="Add A Payment Method"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/paymenttext"
+        android:id="@+id/sellpaymenttext"
         android:textSize="18sp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
@@ -20,7 +20,7 @@
         android:id="@+id/button8"
         android:layout_alignBaseline="@+id/button7"
         android:layout_alignBottom="@+id/button7"
-        android:layout_alignEnd="@+id/paymenttext"
+        android:layout_alignEnd="@+id/sellpaymenttext"
         android:background="@color/colorAccent"/>
 
     <Button
@@ -29,8 +29,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="41dp"
         android:id="@+id/button7"
-        android:layout_below="@+id/paymenttext"
-        android:layout_alignStart="@+id/paymenttext"
+        android:layout_below="@+id/sellpaymenttext"
+        android:layout_alignStart="@+id/sellpaymenttext"
         android:background="@color/colorAccent"/>
 
 </RelativeLayout>

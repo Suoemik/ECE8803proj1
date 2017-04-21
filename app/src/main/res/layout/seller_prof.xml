@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/sloc_btn"
         android:layout_marginTop="38dp"
-        android:layout_below="@+id/bphone_btn"
+        android:layout_below="@+id/sphone_btn"
         android:layout_alignParentStart="true"
         android:layout_width="400dp" />
 
@@ -18,14 +18,14 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
         android:id="@+id/textView14"
-        android:layout_below="@+id/bphone_btn"
+        android:layout_below="@+id/sphone_btn"
         android:layout_alignParentStart="true" />
 
     <Button
         android:layout_height="wrap_content"
         android:id="@+id/sphone_btn"
         android:layout_marginTop="29dp"
-        android:layout_below="@+id/bpass_btn"
+        android:layout_below="@+id/spass_btn"
         android:layout_alignParentStart="true"
         android:layout_width="400dp" />
 
@@ -33,14 +33,14 @@
         android:text=" Phone Number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/bpass_btn"
+        android:layout_below="@+id/spass_btn"
         android:layout_marginTop="17dp"
         android:id="@+id/textView13" />
 
     <Button
         android:layout_height="wrap_content"
         android:id="@+id/spass_btn"
-        android:layout_below="@+id/busern_btn"
+        android:layout_below="@+id/susern_btn"
         android:layout_alignParentStart="true"
         android:layout_marginTop="32dp"
         android:layout_width="400dp" />
@@ -56,7 +56,7 @@
         android:text="Password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/busern_btn"
+        android:layout_below="@+id/susern_btn"
         android:layout_alignEnd="@+id/textView10"
         android:layout_marginTop="18dp"
         android:id="@+id/textView11" />
@@ -65,7 +65,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/df_pyment_btn"
         android:layout_marginTop="39dp"
-        android:layout_below="@+id/bloc_btn"
+        android:layout_below="@+id/sloc_btn"
         android:layout_alignParentStart="true"
         android:layout_width="400dp" />
 
@@ -74,7 +74,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView12"
-        android:layout_below="@+id/bloc_btn"
+        android:layout_below="@+id/sloc_btn"
         android:layout_alignStart="@+id/textView11"
         android:layout_marginTop="26dp" />
 
@@ -98,7 +98,6 @@
     <Button
         android:text="Log out"
         android:id="@+id/splogout_btn"
-        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
         android:layout_height="35dp"
         android:layout_width="150dp"
         android:layout_alignParentBottom="true"
@@ -108,7 +107,6 @@
         android:text="Main"
         android:layout_height="35dp"
         android:id="@+id/spmain_btn"
-        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
         android:layout_width="150dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true" />
