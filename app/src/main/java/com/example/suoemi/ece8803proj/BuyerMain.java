@@ -35,14 +35,21 @@ import com.joptimizer.optimizers.LPOptimizationRequest;
 import com.joptimizer.optimizers.LPPrimalDualMethod;
 import com.joptimizer.optimizers.OptimizationResponse;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.fail;
 
 /**
  * Created by Suoemi on 3/17/2017.
@@ -64,6 +71,8 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
     private double[] c;
     private double[] B;
     private double[] ub;
+    private double[][] A;
+    private double[] lb;
     private Map<String, Object> usr_sell;
     private Map<String, Object> usr_buy;
     private double outp;
@@ -94,6 +103,13 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
     private DatabaseReference databaseref;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private ArrayBlockingQueue<Integer> mQueue;
+    private int clicked;
+    private static Thread sNetworkThreadSend;
+    private static Thread sNetworkThreadReceive;
+
+    private AtomicBoolean mStop;
+    private Runnable mNetworkRunnableSend;
+    private Runnable mNetworkRunnableReceive;
 
     private static final String TAG = "BuyerMain";
 
@@ -113,7 +129,10 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
         evreq = new ArrayList<>();
         bidamt = new ArrayList<>();
         bidpr = new ArrayList<>();
-        mQueue = new ArrayBlockingQueue<Integer>(100);
+        mQueue = new ArrayBlockingQueue<Integer>(1);
+        sNetworkThreadSend = null;
+        sNetworkThreadReceive = null;
+        mStop = new AtomicBoolean(false);
 
         mSeekBar = (Button) findViewById(R.id.ardbtn);
         databaseref = FirebaseDatabase.getInstance().getReference();
@@ -127,6 +146,50 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
         mAddressOutput = "";
 
         ScrollView scrollView = (ScrollView) findViewById(R.id.scrollbuy);
+
+        clicked=0;
+
+        mSeekBar.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v)
+                                        {
+                                            //change boolean value
+                                            //for (int i = 0; i < sol.length; i++) {
+                                              //  if(i>=0) {
+                                            clicked=1;
+                                                    mQueue.clear();
+                                                    mQueue.offer(1);
+                                                //}
+                                           // }
+                                        }
+                                    });
+
+                                    mNetworkRunnableSend = new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            log("starting network thread for sending");
+                                            String urlBase = "http://"+ "192.168.43.161" +"/arduino/analog/3/";
+                                            String url;
+                                            try {
+                                                while(!mStop.get()){
+                                                    int val = mQueue.take();
+                                                    if(val >= 0){
+                                                        HttpClient httpClient = new DefaultHttpClient();
+                                                        url = urlBase.concat(String.valueOf(val));
+                                                        HttpResponse response = httpClient.execute(new HttpGet(url));
+                                                    }
+                                                }
+                                            } catch (ClientProtocolException e) {
+                                                e.printStackTrace();
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            } catch (InterruptedException e) {
+                                                e.printStackTrace();
+                                            }
+
+                                            sNetworkThreadSend = null;
+                                        }
+                                    };
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -149,7 +212,7 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
         tr = new TableRow(this);
 
         TableRow.LayoutParams params1 = new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT);
-        params1.setMargins(30, 100, 10, 10);
+        params1.setMargins(30, 100, 5, 10);
         params1.span = 2;
 
         title.setText("OUTPUT");
@@ -216,6 +279,7 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
 
         btn2.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
+                databaseref.child("ev drivers").child(muser.getUid()).child("join").setValue("0");
                 Intent mIntent = new Intent(BuyerMain.this, BuyerInput.class);
                 mIntent.putExtra("FROM_ACTIVITY", "BuyerMain");
                 startActivity(mIntent);
@@ -238,21 +302,28 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
         };
         databaseref.child("ev drivers").child(muser.getUid()).child("ev req").addValueEventListener(postListener);
 
-        ValueEventListener checklist2 = new ValueEventListener() {
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        ValueEventListener buylist = new ValueEventListener() {
             @Override
             public void onDataChange(final DataSnapshot dataSnapshot) {
-                final ArrayList<String> allusr = new ArrayList<String>();
-                final ArrayList<String> newarr = new ArrayList<String>();
+                if (dataSnapshot.getValue(String.class).equals("1")) {
 
-                usr_sell = new HashMap<String, Object>();
-                usr_sell = (Map<String, Object>) dataSnapshot.getValue();
+                    ValueEventListener checklist2 = new ValueEventListener() {
+                        @Override
+                        public void onDataChange(final DataSnapshot dataSnapshot) {
+                            final ArrayList<String> allusr = new ArrayList<String>();
+                            final ArrayList<String> newarr = new ArrayList<String>();
 
-                for (Map.Entry<String, Object> entry : usr_sell.entrySet()) {
-                    Map singlesell = (Map) entry.getValue();
-                    allsell.add((String) singlesell.get("username"));
-                    newarr.add((String) singlesell.get("join"));
-                    allusr.add(entry.getKey());
-                }
+                            usr_sell = new HashMap<String, Object>();
+                            usr_sell = (Map<String, Object>) dataSnapshot.getValue();
+
+                            for (Map.Entry<String, Object> entry : usr_sell.entrySet()) {
+                                Map singlesell = (Map) entry.getValue();
+                                allsell.add((String) singlesell.get("username"));
+                                newarr.add((String) singlesell.get("join"));
+                                allusr.add(entry.getKey());
+                            }
 //
 //                for(int i = 0; i<allusr.size(); i++) {
 //                    if (newarr.get(i).equals("1")) {
@@ -260,76 +331,92 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
 //                            @Override
 //                            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                for (Map.Entry<String, Object> entry : usr_sell.entrySet()) {
-                                    Map singlesell = (Map) entry.getValue();
+                            for (Map.Entry<String, Object> entry : usr_sell.entrySet()) {
+                                Map singlesell = (Map) entry.getValue();
 
-                                    allsell.add((String) singlesell.get("username"));
-                                    bidamt.add(Double.valueOf((String) singlesell.get("bid amount")));
-                                    bidpr.add(Double.valueOf((String) singlesell.get("bid price")));
-                                }
+                                allsell.add((String) singlesell.get("username"));
+                                bidamt.add(Double.valueOf((String) singlesell.get("bid amount")));
+                                bidpr.add(Double.valueOf((String) singlesell.get("bid price")));
+                            }
 
-                                ValueEventListener joinlist2 = new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        Log.d(TAG, "Seller username list: " + allsell);
-                                        usr_buy = new HashMap<String, Object>();
-                                        usr_buy = (Map<String, Object>) dataSnapshot.getValue();
-                                        LPOptimizationRequest or = new LPOptimizationRequest();
+                            ValueEventListener joinlist2 = new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    Log.d(TAG, "Seller username list: " + allsell);
+                                    usr_buy = new HashMap<String, Object>();
+                                    usr_buy = (Map<String, Object>) dataSnapshot.getValue();
+                                    LPOptimizationRequest or = new LPOptimizationRequest();
 
-                                        for (Map.Entry<String, Object> entry : usr_buy.entrySet()) {
-                                            Map singlebuy = (Map) entry.getValue();
+                                    for (Map.Entry<String, Object> entry : usr_buy.entrySet()) {
+                                        Map singlebuy = (Map) entry.getValue();
 
-                                            allbuy.add((String) singlebuy.get("username"));
-                                            evreq.add(Double.valueOf((String) singlebuy.get("ev req")));
-                                        }
-                                        Log.d(TAG, "Buyer username list: " + allbuy);
+                                        allbuy.add((String) singlebuy.get("username"));
+                                        evreq.add(Double.valueOf((String) singlebuy.get("ev req")));
+                                    }
+                                    Log.d(TAG, "Buyer username list: " + allbuy);
 
-                                        c = new double[usr_sell.size()];
-                                        for (int i = 0; i < c.length; i++) {
-                                            c[i] = bidpr.get(i).doubleValue();
-                                            System.out.print("Price" + c);
-                                        }
+                                    c = new double[usr_sell.size()];
+                                    for (int i = 0; i < c.length; i++) {
+                                        c[i] = bidpr.get(i).doubleValue();
+                                        System.out.print("Price" + c);
+                                    }
 
-                                        double[][] A = new double[][]{{1, 1, 1}};
+                                    A = new double[1][usr_sell.size()];
+                                    for (int i = 0; i < c.length; i++) {
+                                        A[0][i] = 1;
+                                        System.out.print("A: " + A);
+                                    }
 
-                                        B = new double[usr_buy.size()];
-                                        for (int i = 0; i < B.length; i++) {
-                                            B[i] = evreq.get(i).doubleValue();
-                                        }
+                                    B = new double[usr_buy.size()];
+                                    for (int i = 0; i < B.length; i++) {
+                                        B[i] = evreq.get(i).doubleValue();
+                                    }
 
-                                        double[] lb = new double[]{0, 0, 0};
+                                    lb = new double[usr_sell.size()];
+                                    for (int i = 0; i < c.length; i++) {
+                                        lb[i] = 0;
+                                        System.out.print("LB: " + lb);
+                                    }
 
-                                        ub = new double[usr_sell.size()];
-                                        for (int i = 0; i < ub.length; i++) {
-                                            ub[i] = bidamt.get(i).doubleValue();
-                                        }
+                                    ub = new double[usr_sell.size()];
+                                    for (int i = 0; i < ub.length; i++) {
+                                        ub[i] = bidamt.get(i).doubleValue();
+                                    }
 
-                                        or.setC(c);
-                                        or.setA(A);
-                                        or.setB(B);
-                                        or.setLb(lb);
-                                        or.setUb(ub);
-                                        or.setDumpProblem(true);
+                                    or.setC(c);
+                                    or.setA(A);
+                                    or.setB(B);
+                                    or.setLb(lb);
+                                    or.setUb(ub);
+                                    or.setDumpProblem(true);
 
-                                        //optimization
-                                        LPPrimalDualMethod opt = new LPPrimalDualMethod();
+                                    //optimization
+                                    LPPrimalDualMethod opt = new LPPrimalDualMethod();
 
-                                        opt.setLPOptimizationRequest(or);
-                                        try {
-                                            returnCode = opt.optimize();
-                                            assertEquals("success ", OptimizationResponse.SUCCESS, returnCode);
-                                            sol = opt.getOptimizationResponse().getSolution();
-                                            String log = "Solution: " + Arrays.toString(sol);
-                                            Log.d("Solution:: ", log);
-                                        } catch (Exception e) {
-                                            fail(e.toString());
-                                        }
+                                    opt.setLPOptimizationRequest(or);
+                                    try {
+                                        returnCode = opt.optimize();
+                                        assertEquals("success ", OptimizationResponse.SUCCESS, returnCode);
+                                        sol = opt.getOptimizationResponse().getSolution();
+                                        String log = "Solution: " + Arrays.toString(sol);
+                                        Log.d("Solution:: ", log);
+                                    } catch (Exception e) {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Toast.makeText(BuyerMain.this, "Seller(s) value too low or not enough sellers" , Toast.LENGTH_SHORT).show();
+                                            }
+                                            //fail(e.toString());
+                                        });
+                                    }
 
+                                    if(sol != null && sol.length>=1) {
                                         for (int i = 0; i < sol.length; i++) {
                                             outa += sol[i];
                                             outp += c[i] * sol[i];
                                         }
                                         Log.d(TAG, "Output after: " + outa);
+
 
                                         TableLayout tabLay = (TableLayout) findViewById(R.id.tableinfobuy);
                                         RelativeLayout relLay = (RelativeLayout) findViewById(R.id.relbuy);
@@ -341,11 +428,12 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
                                             sellusr = new TextView(BuyerMain.this);
                                             sellamt = new TextView(BuyerMain.this);
 
-                                            sellusr.setText("Seller " + (i + 1) + " Initial Amt: " + ub[i]);
+                                            sellusr.setText("Seller " + (i + 1) + " Bid Amt: " + ub[i] + " k" +
+                                                    "Wh");
                                             sellusr.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                                             tr.addView(sellusr);
 
-                                            sellamt.setText(Double.toString(Math.round(sol[i])));
+                                            sellamt.setText("Cala Amt: " + Double.toString(Math.round(sol[i])) + " kWh");
                                             sellamt.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                                             tr.addView(sellamt);
 
@@ -353,6 +441,46 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
                                                     TableRow.LayoutParams.FILL_PARENT,
                                                     TableRow.LayoutParams.WRAP_CONTENT));
                                         }
+
+//                                    mSeekBar.setOnClickListener(new View.OnClickListener() {
+//                                        @Override
+//                                        public void onClick(View v)
+//                                        {
+//                                            //change boolean value
+//                                            for (int i = 0; i < sol.length; i++) {
+//                                                if(i>=0) {
+//                                                    mQueue.clear();
+//                                                    mQueue.offer(i + 1);
+//                                                }
+//                                            }
+//                                        }
+//                                    });
+//
+//                                    mNetworkRunnableSend = new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            String urlBase = "http://"+ "" +"/arduino/analog/13/";
+//                                            String url;
+//                                            try {
+//                                                while(!mStop.get()){
+//                                                    int val = mQueue.take();
+//                                                    if(val >= 0){
+//                                                        HttpClient httpClient = new DefaultHttpClient();
+//                                                        url = urlBase.concat(String.valueOf(val));
+//                                                        HttpResponse response = httpClient.execute(new HttpGet(url));
+//                                                    }
+//                                                }
+//                                            } catch (ClientProtocolException e) {
+//                                                e.printStackTrace();
+//                                            } catch (IOException e) {
+//                                                e.printStackTrace();
+//                                            } catch (InterruptedException e) {
+//                                                e.printStackTrace();
+//                                            }
+//
+//                                            sNetworkThreadSend = null;
+//                                        }
+//                                    };
 
                                         TableRow.LayoutParams params1 = new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT);
                                         params1.setMargins(30, 100, 10, 10);
@@ -363,23 +491,24 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
                                         buytot.setLayoutParams(params1);
                                         pricetot.setLayoutParams(params1);
 
-                                        buytot.setText("EV driver total amount: " + outa);
+                                        buytot.setText("EV driver total energy amount: " + Math.round(outa) + " kWh");
                                         buytot.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                                        pricetot.setText("EV driver total cost: " + Math.round(outp));
+                                        pricetot.setText("EV driver total cost: " + "$" + Math.round(outp));
                                         pricetot.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
                                         tabLay.addView(buytot);
                                         tabLay.addView(pricetot);
                                     }
+                                }
 
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-                                        // Getting Post failed, log a message
-                                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                                        // ...
-                                    }
-                                };
-                                databaseref.child("ev drivers").addValueEventListener(joinlist2);
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    // Getting Post failed, log a message
+                                    Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                                    // ...
+                                }
+                            };
+                            databaseref.child("ev drivers").addValueEventListener(joinlist2);
 //                            }
 //
 //                            @Override
@@ -391,30 +520,42 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
 ////                        };
 //                        databaseref.child("sellers").addValueEventListener(joinlist);
 
-                        btn3.setOnClickListener(new View.OnClickListener() {
-                            public void onClick(View v) {
-                                startActivity(new Intent(BuyerMain.this, BuyerProfile.class));
-                            }
-                        });
+                            btn3.setOnClickListener(new View.OnClickListener() {
+                                public void onClick(View v) {
+                                    startActivity(new Intent(BuyerMain.this, BuyerProfile.class));
+                                }
+                            });
 
-                        btn4.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                databaseref.child("ev drivers").child(muser.getUid()).child("join").setValue("0");
-                                mAuth.signOut();
-                                startActivity(new Intent(BuyerMain.this, LoginActivity.class));
-                            }
-                        });
+                            btn4.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    databaseref.child("ev drivers").child(muser.getUid()).child("join").setValue("0");
+                                    mAuth.signOut();
+                                    startActivity(new Intent(BuyerMain.this, LoginActivity.class));
+                                }
+                            });
 
-                        btn2.setOnClickListener(new View.OnClickListener() {
-                            public void onClick(View v) {
-                                Intent mIntent = new Intent(BuyerMain.this, BuyerInput.class);
-                                mIntent.putExtra("FROM_ACTIVITY", "BuyerMain");
-                                startActivity(mIntent);
-                            }
-                        });
+                            btn2.setOnClickListener(new View.OnClickListener() {
+                                public void onClick(View v) {
+                                    databaseref.child("ev drivers").child(muser.getUid()).child("join").setValue("0");
+                                    Intent mIntent = new Intent(BuyerMain.this, BuyerInput.class);
+                                    mIntent.putExtra("FROM_ACTIVITY", "BuyerMain");
+                                    startActivity(mIntent);
+                                }
+                            });
 //                    }
 //                }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            // Getting Post failed, log a message
+                            Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                            // ...
+                        }
+                    };
+                    databaseref.child("sellers").addValueEventListener(checklist2);
+                }
             }
 
             @Override
@@ -424,8 +565,9 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
                 // ...
             }
         };
-        databaseref.child("sellers").addValueEventListener(checklist2);
+        databaseref.child("ev drivers").child(muser.getUid()).child("join").addValueEventListener(buylist);
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         buildGoogleApiClient();
     }
 
@@ -513,13 +655,27 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
         }
     }
 
+    public void log(String s){
+        Log.d(">==< "+TAG+" >==<", s);
+    }
+
     @Override
     public void onStart() {
+
+        mStop.set(false);
+        if(sNetworkThreadSend == null){
+            sNetworkThreadSend = new Thread(mNetworkRunnableSend);
+            sNetworkThreadSend.start();
+        }
         super.onStart();
     }
 
     @Override
     public void onStop() {
+        databaseref.child("ev drivers").child(muser.getUid()).child("join").setValue("0");
+        mStop.set(true);
+        mQueue.clear();
+        if(sNetworkThreadSend != null) sNetworkThreadSend.interrupt();
         super.onStop();
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);

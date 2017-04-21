@@ -9,12 +9,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+
 /**
  * Created by Suoemi on 3/17/2017.
  */
 
 public class SellerProfile extends AppCompatActivity {
     public static Button locbtn;
+
+    private FirebaseAuth mAuth;
+    private FirebaseUser muser;
+    private DatabaseReference databaseref;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -25,16 +25,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.joptimizer.optimizers.LPOptimizationRequest;
 import com.joptimizer.optimizers.LPPrimalDualMethod;
-import com.joptimizer.optimizers.OptimizationResponse;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.fail;
 
 /**
  * Created by Suoemi on 3/17/2017.
@@ -56,6 +51,8 @@ public class SellerMain extends AppCompatActivity {
     private double[] c;
     private double[] B;
     private double[] ub;
+    private double[][] A;
+    private double[] lb;
     private Map<String, Object> usr_sell;
     private Map<String, Object> usr_buy;
     private double outp;
@@ -255,15 +252,22 @@ public class SellerMain extends AppCompatActivity {
                                         System.out.print("Price" + c);
                                     }
 
-                                    double[][] A = new double[][]{{1, 1, 1}};
+                                    A = new double[1][usr_sell.size()];
+                                    for (int i = 0; i < c.length; i++) {
+                                        A[0][i] = 1;
+                                        System.out.print("A: " + A);
+                                    }
 
                                     B = new double[usr_buy.size()];
                                     for (int i = 0; i < B.length; i++) {
                                         B[i] = evreq.get(i).doubleValue();
                                     }
 
-                                    double[] lb = new double[]{0, 0, 0};
-
+                                    lb = new double[usr_sell.size()];
+                                    for (int i = 0; i < c.length; i++) {
+                                        lb[i] = 0;
+                                        System.out.print("LB: " + lb);
+                                    }
                                     ub = new double[usr_sell.size()];
                                     for (int i = 0; i < ub.length; i++) {
                                         ub[i] = bidamt.get(i).doubleValue();
@@ -280,61 +284,95 @@ public class SellerMain extends AppCompatActivity {
                                     LPPrimalDualMethod opt = new LPPrimalDualMethod();
 
                                     opt.setLPOptimizationRequest(or);
-                                    try {
-                                        returnCode = opt.optimize();
-                                        assertEquals("success ", OptimizationResponse.SUCCESS, returnCode);
-                                        sol = opt.getOptimizationResponse().getSolution();
-                                        String log = "Solution: " + Arrays.toString(sol);
-                                        Log.d("Solution:: ", log);
-                                    } catch (Exception e) {
-                                        fail(e.toString());
+                                    if(sol != null && sol.length>=1) {
+                                        for (int i = 0; i < sol.length; i++) {
+                                            outa += sol[i];
+                                            outp += c[i] * sol[i];
+                                        }
+                                        Log.d(TAG, "Output after: " + outa);
+
+
+                                        TableLayout tabLay = (TableLayout) findViewById(R.id.tableinfobuy);
+                                        RelativeLayout relLay = (RelativeLayout) findViewById(R.id.relbuy);
+
+                                        for (int i = 0; i < sol.length; i++) {
+                                            tr = new TableRow(SellerMain.this);
+                                            tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+
+                                            sellusr = new TextView(SellerMain.this);
+                                            sellamt = new TextView(SellerMain.this);
+
+                                            sellusr.setText("Seller " + (i + 1) + " Bid Amt: " + ub[i] + " k" +
+                                                    "Wh");
+                                            sellusr.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                                            tr.addView(sellusr);
+
+                                            sellamt.setText("Cala Amt: " + Double.toString(Math.round(sol[i])) + " kWh");
+                                            sellamt.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                                            tr.addView(sellamt);
+
+                                            tabLay.addView(tr, new TableLayout.LayoutParams(
+                                                    TableRow.LayoutParams.FILL_PARENT,
+                                                    TableRow.LayoutParams.WRAP_CONTENT));
+                                        }
+
+//                                    mSeekBar.setOnClickListener(new View.OnClickListener() {
+//                                        @Override
+//                                        public void onClick(View v)
+//                                        {
+//                                            //change boolean value
+//                                            for (int i = 0; i < sol.length; i++) {
+//                                                if(i>=0) {
+//                                                    mQueue.clear();
+//                                                    mQueue.offer(i + 1);
+//                                                }
+//                                            }
+//                                        }
+//                                    });
+//
+//                                    mNetworkRunnableSend = new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            String urlBase = "http://"+ "" +"/arduino/analog/13/";
+//                                            String url;
+//                                            try {
+//                                                while(!mStop.get()){
+//                                                    int val = mQueue.take();
+//                                                    if(val >= 0){
+//                                                        HttpClient httpClient = new DefaultHttpClient();
+//                                                        url = urlBase.concat(String.valueOf(val));
+//                                                        HttpResponse response = httpClient.execute(new HttpGet(url));
+//                                                    }
+//                                                }
+//                                            } catch (ClientProtocolException e) {
+//                                                e.printStackTrace();
+//                                            } catch (IOException e) {
+//                                                e.printStackTrace();
+//                                            } catch (InterruptedException e) {
+//                                                e.printStackTrace();
+//                                            }
+//
+//                                            sNetworkThreadSend = null;
+//                                        }
+//                                    };
+
+                                        TableRow.LayoutParams params1 = new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT);
+                                        params1.setMargins(30, 100, 10, 10);
+                                        params1.span = 2;
+
+                                        buytot = new TextView(SellerMain.this);
+                                        pricetot = new TextView(SellerMain.this);
+                                        buytot.setLayoutParams(params1);
+                                        pricetot.setLayoutParams(params1);
+
+                                        buytot.setText("EV driver total energy amount: " + Math.round(outa) + " kWh");
+                                        buytot.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                                        pricetot.setText("EV driver total cost: " + "$" + Math.round(outp));
+                                        pricetot.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+
+                                        tabLay.addView(buytot);
+                                        tabLay.addView(pricetot);
                                     }
-
-                                    for (int i = 0; i < sol.length; i++) {
-                                        outa += sol[i];
-                                        outp += c[i]*sol[i];
-                                    }
-                                    Log.d(TAG, "Output after: " + outa);
-
-                                    TableLayout tabLay = (TableLayout) findViewById(R.id.tableinfosell);
-                                    RelativeLayout relLay = (RelativeLayout) findViewById(R.id.relsell);
-
-                                    for (int i = 0; i < sol.length; i++) {
-                                        tr = new TableRow(SellerMain.this);
-                                        tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-
-                                        sellusr = new TextView(SellerMain.this);
-                                        sellamt = new TextView(SellerMain.this);
-
-                                        sellusr.setText("Seller " + (i+1) + " Initial Amt: " + ub[i]);
-                                        sellusr.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                                        tr.addView(sellusr);
-
-                                        sellamt.setText(Double.toString(Math.round(sol[i])));
-                                        sellamt.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                                        tr.addView(sellamt);
-
-                                        tabLay.addView(tr, new TableLayout.LayoutParams(
-                                                TableRow.LayoutParams.FILL_PARENT,
-                                                TableRow.LayoutParams.WRAP_CONTENT));
-                                    }
-
-                                    TableRow.LayoutParams params1 = new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT);
-                                    params1.setMargins(30, 100, 10, 10);
-                                    params1.span = 2;
-
-                                    buytot = new TextView(SellerMain.this);
-                                    pricetot = new TextView(SellerMain.this);
-                                    buytot.setLayoutParams(params1);
-                                    pricetot.setLayoutParams(params1);
-
-                                    buytot.setText("EV driver total amount: " + outa);
-                                    buytot.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                                    pricetot.setText("EV driver total cost: " + outp);
-                                    pricetot.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-
-                                    tabLay.addView(buytot);
-                                    tabLay.addView(pricetot);
                                 }
 
                                 @Override
