@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,7 +34,10 @@ public class SellerProfile extends AppCompatActivity {
 
         Button logoutbtn = (Button) findViewById(R.id.splogout_btn);
         Button mainbtn = (Button) findViewById(R.id.spmain_btn);
-        locbtn = (Button) findViewById(R.id.bloc_btn);
+        locbtn = (Button) findViewById(R.id.sloc_btn);
+        Button usr = (Button) findViewById(R.id.susern_btn);
+        Button pno = (Button) findViewById(R.id.sphone_btn);
+        Button pmnt = (Button) findViewById(R.id.df_pyment_btn);
 
         logoutbtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -45,6 +50,73 @@ public class SellerProfile extends AppCompatActivity {
             public void onClick(View v) {
                 Intent mIntent = new Intent(SellerProfile.this, SellerMain.class);
                 startActivity(mIntent);
+            }
+        });
+
+        pmnt.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent mIntent = new Intent(SellerProfile.this, PaymentInput.class);
+                startActivity(mIntent);
+            }
+        });
+
+        usr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LayoutInflater layoutInflaterAndroid = LayoutInflater.from(SellerProfile.this);
+                View mView = layoutInflaterAndroid.inflate(R.layout.user_input, null);
+                AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(SellerProfile.this);
+                alertDialogBuilderUserInput.setView(mView);
+
+                final EditText userInputDialogEditText = (EditText) mView.findViewById(R.id.userInputDialog);
+                alertDialogBuilderUserInput
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogBox, int id) {
+                                // ToDo get user input here
+                                databaseref.child("sellers").child(muser.getUid()).child("username").setValue(userInputDialogEditText.getText().toString());
+                            }
+                        })
+
+                        .setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialogBox, int id) {
+                                        dialogBox.cancel();
+                                    }
+                                });
+
+                AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
+                alertDialogAndroid.show();
+            }
+        });
+
+        pno.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LayoutInflater layoutInflaterAndroid = LayoutInflater.from(SellerProfile.this);
+                View mView = layoutInflaterAndroid.inflate(R.layout.user_input, null);
+                AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(SellerProfile.this);
+                alertDialogBuilderUserInput.setView(mView);
+
+                final EditText userInputDialogEditText = (EditText) mView.findViewById(R.id.userInputDialog);
+                alertDialogBuilderUserInput
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogBox, int id) {
+                                // ToDo get user input here
+                                databaseref.child("sellers").child(muser.getUid()).child("phone number").setValue(userInputDialogEditText.getText().toString());
+                            }
+                        })
+
+                        .setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialogBox, int id) {
+                                        dialogBox.cancel();
+                                    }
+                                });
+
+                AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
+                alertDialogAndroid.show();
             }
         });
 

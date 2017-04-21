@@ -3,11 +3,8 @@ package com.example.suoemi.ece8803proj;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -35,13 +32,11 @@ import com.joptimizer.optimizers.LPOptimizationRequest;
 import com.joptimizer.optimizers.LPPrimalDualMethod;
 import com.joptimizer.optimizers.OptimizationResponse;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -58,7 +53,6 @@ import static junit.framework.Assert.assertEquals;
 public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
 
     protected Location mLastLocation;
-    private AddressResultReceiver mResultReceiver;
     protected GoogleApiClient mGoogleApiClient;
     protected boolean mAddressRequested;
     protected String mAddressOutput;
@@ -105,10 +99,14 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
     private ArrayBlockingQueue<Integer> mQueue;
     private int clicked;
     private static Thread sNetworkThreadSend;
+    private static Thread sNetworkThread;
     private static Thread sNetworkThreadReceive;
 
     private AtomicBoolean mStop;
     private Runnable mNetworkRunnableSend;
+    private OutputStream mOutputStream;
+    private Socket mSocket;
+    private Runnable mNetworkRunnable;
     private Runnable mNetworkRunnableReceive;
 
     private static final String TAG = "BuyerMain";
@@ -120,8 +118,8 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
 
         this.btn = (Button) findViewById(R.id.begin_btn);
         this.btn2 = (Button) findViewById(R.id.energyreq_btn);
-        this.btn3 = (Button)findViewById(R.id.buysett_btn);
-        this.btn4 = (Button) findViewById(R.id.bm_logout) ;
+        this.btn3 = (Button) findViewById(R.id.buysett_btn);
+        this.btn4 = (Button) findViewById(R.id.bm_logout);
 
         allsell = new ArrayList<>();
         allbuy = new ArrayList<>();
@@ -131,7 +129,10 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
         bidpr = new ArrayList<>();
         mQueue = new ArrayBlockingQueue<Integer>(1);
         sNetworkThreadSend = null;
+        sNetworkThread = null;
         sNetworkThreadReceive = null;
+        mOutputStream = null;
+        mSocket = null;
         mStop = new AtomicBoolean(false);
 
         mSeekBar = (Button) findViewById(R.id.ardbtn);
@@ -139,57 +140,110 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
         mAuth = FirebaseAuth.getInstance();
         muser = mAuth.getCurrentUser();
 
-        mResultReceiver = new AddressResultReceiver(new Handler());
         mFetchAddressButton = (Button) findViewById(R.id.benterloc);
-
-        mAddressRequested = false;
-        mAddressOutput = "";
 
         ScrollView scrollView = (ScrollView) findViewById(R.id.scrollbuy);
 
-        clicked=0;
+        clicked = 0;
+
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
+
+        try {
+            InetAddress address = InetAddress.getByName("78.46.84.171");
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
 
         mSeekBar.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v)
-                                        {
-                                            //change boolean value
-                                            //for (int i = 0; i < sol.length; i++) {
-                                              //  if(i>=0) {
-                                            clicked=1;
-                                                    mQueue.clear();
-                                                    mQueue.offer(1);
-                                                //}
-                                           // }
-                                        }
-                                    });
+            @Override
+            public void onClick(View v) {
+                //change boolean value
+                //for (int i = 0; i < sol.length; i++) {
+                //  if(i>=0) {
+                clicked = 1;
+                mQueue.clear();
+                mQueue.offer(1);
+                //}
+                // }
+            }
+        });
 
-                                    mNetworkRunnableSend = new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            log("starting network thread for sending");
-                                            String urlBase = "http://"+ "192.168.43.161" +"/arduino/analog/3/";
-                                            String url;
-                                            try {
-                                                while(!mStop.get()){
-                                                    int val = mQueue.take();
-                                                    if(val >= 0){
-                                                        HttpClient httpClient = new DefaultHttpClient();
-                                                        url = urlBase.concat(String.valueOf(val));
-                                                        HttpResponse response = httpClient.execute(new HttpGet(url));
-                                                    }
-                                                }
-                                            } catch (ClientProtocolException e) {
-                                                e.printStackTrace();
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                            } catch (InterruptedException e) {
-                                                e.printStackTrace();
-                                            }
+        mNetworkRunnable = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    mSocket = new Socket(InetAddress.getByName("192.168.43.161"), 6666);
+                    mOutputStream = mSocket.getOutputStream();
+                } catch (UnknownHostException e1) {
+                    e1.printStackTrace();
+                    mStop.set(true);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                    mStop.set(true);
+                }
 
-                                            sNetworkThreadSend = null;
-                                        }
-                                    };
+                mQueue.clear(); // we only want new values
+
+                try {
+                    while(!mStop.get()){
+                        int val = mQueue.take();
+                        if(val >= 0){
+                            mOutputStream.write((val+"\n").getBytes());
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally{
+                    try {
+                        mStop.set(true);
+                        if(mOutputStream != null) mOutputStream.close();
+                        if(mSocket != null) mSocket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                sNetworkThread = null;
+            }
+        };
+
+//        mNetworkRunnableSend = new Runnable() {
+//            @Override
+//            public void run() {
+//                log("starting network thread for sending");
+//                String urlBase = "http://" + "192.168.43.161" + "/arduino/analog/3/";
+//                String url;
+//                try {
+//                    while (!mStop.get()) {
+//                        int val = mQueue.take();
+//                        if (val >= 0) {
+//                            HttpClient httpClient = new DefaultHttpClient();
+//                            url = urlBase.concat(String.valueOf(val));
+//                            HttpResponse response = httpClient.execute(new HttpGet(url));
+//                        }
+//                    }
+//                } catch (ClientProtocolException e) {
+//                    e.printStackTrace();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                sNetworkThreadSend = null;
+//            }
+//        };
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -237,14 +291,12 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
                         usr_sell = new HashMap<String, Object>();
                         usr_sell = (Map<String, Object>) dataSnapshot.getValue();
 
-                        for(Map.Entry<String, Object> entry : usr_sell.entrySet())
-                        {
+                        for (Map.Entry<String, Object> entry : usr_sell.entrySet()) {
                             Map singlesell = (Map) entry.getValue();
                             //allsell.add((String) singlesell.get("username"));
                             allusr.add(entry.getKey());
                         }
-                        for(int i = 0; i<allusr.size(); i++)
-                        {
+                        for (int i = 0; i < allusr.size(); i++) {
                             Log.d(TAG, "array list for seller: " + allusr.get(i));
                             databaseref.child("sellers").child(allusr.get(i)).child("join").setValue("1");
                         }
@@ -277,7 +329,7 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
             }
         });
 
-        btn2.setOnClickListener(new View.OnClickListener(){
+        btn2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 databaseref.child("ev drivers").child(muser.getUid()).child("join").setValue("0");
                 Intent mIntent = new Intent(BuyerMain.this, BuyerInput.class);
@@ -404,13 +456,13 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
                                         runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                Toast.makeText(BuyerMain.this, "Seller(s) value too low or not enough sellers" , Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(BuyerMain.this, "Seller(s) value too low or not enough sellers", Toast.LENGTH_SHORT).show();
                                             }
                                             //fail(e.toString());
                                         });
                                     }
 
-                                    if(sol != null && sol.length>=1) {
+                                    if (sol != null && sol.length >= 1) {
                                         for (int i = 0; i < sol.length; i++) {
                                             outa += sol[i];
                                             outp += c[i] * sol[i];
@@ -568,67 +620,11 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
         databaseref.child("ev drivers").child(muser.getUid()).child("join").addValueEventListener(buylist);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        buildGoogleApiClient();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    protected void startIntentService() {
-        Intent intent = new Intent(this, FetchAddressIntentService.class);
-        intent.putExtra(Constants.RECEIVER, mResultReceiver);
-        intent.putExtra(Constants.LOCATION_DATA_EXTRA, mLastLocation);
-        startService(intent);
-    }
-
-    protected void displayAddressOutput() {
-        mFetchAddressButton.setText(mAddressOutput);
-    }
-
-    class AddressResultReceiver extends ResultReceiver {
-        public AddressResultReceiver(Handler handler) {
-            super(handler);
-        }
-
-        @Override
-        protected void onReceiveResult(int resultCode, Bundle resultData) {
-
-            // Display the address string
-            // or an error message sent from the intent service.
-            String mAddressOutput = resultData.getString(Constants.RESULT_DATA_KEY);
-            Log.e("RESULT!!!", mAddressOutput);
-            displayAddressOutput();
-
-            // Show a toast message if an address was found.
-            if (resultCode == Constants.SUCCESS_RESULT) {
-                Toast.makeText(BuyerMain.this, getString(R.string.address_found), Toast.LENGTH_SHORT);
-            }
-
-        }
-
-    }
-
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mGoogleApiClient.connect();
-
     }
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        // Gets the best and most recent location currently available,
-        // which may be null in rare cases when a location is not available.
+
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -639,20 +635,21 @@ public class BuyerMain extends AppCompatActivity implements GoogleApiClient.OnCo
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
         if (mLastLocation != null) {
-            // Determine whether a Geocoder is available.
-            if (!Geocoder.isPresent()) {
-                Toast.makeText(this, "No geocoder available",
-                        Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            if (mAddressRequested) {
-                startIntentService();
-            }
+            mFetchAddressButton.setText(String.valueOf(mLastLocation.getLatitude()) +", " + String.valueOf(mLastLocation.getLongitude()));
         }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 
     public void log(String s){

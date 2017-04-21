@@ -2,9 +2,12 @@ package com.example.suoemi.ece8803proj;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -16,6 +19,9 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -36,13 +42,19 @@ import java.util.Map;
  */
 
 
-public class SellerMain extends AppCompatActivity {
+public class SellerMain extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
 
     private Button btn;
     private Button btn2;
     private Button btn3;
     private Button btn4;
     private Button btn5;
+
+    protected Location mLastLocation;
+    protected GoogleApiClient mGoogleApiClient;
+    protected boolean mAddressRequested;
+    protected String mAddressOutput;
+    private Button mFetchAddressButton;
 
     private int c1;
     private int u1;
@@ -89,6 +101,8 @@ public class SellerMain extends AppCompatActivity {
         btn3 = (Button) findViewById(R.id.selsett_btn);
         btn4 = (Button) findViewById(R.id.logout_btn);
         btn5 = (Button) findViewById(R.id.output_btn);
+        mFetchAddressButton = (Button) findViewById(R.id.sell_loc);
+
         final LoginActivity loginActivity = new LoginActivity();
         databaseref = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
@@ -101,6 +115,17 @@ public class SellerMain extends AppCompatActivity {
         bidpr = new ArrayList<>();
 
         String prevact = getIntent().getStringExtra("FROM_ACTIVITY");
+
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -625,6 +650,36 @@ public class SellerMain extends AppCompatActivity {
 
         databaseref.child("sellers").child(muser.getUid()).child("bid amount").addValueEventListener(postListener);
         databaseref.child("sellers").child(muser.getUid()).child("bid price").addValueEventListener(postListener2);
+
+    }
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+            mFetchAddressButton.setText(String.valueOf(mLastLocation.getLatitude()) +", " + String.valueOf(mLastLocation.getLongitude()));
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
 

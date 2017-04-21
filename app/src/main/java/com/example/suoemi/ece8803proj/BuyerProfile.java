@@ -5,12 +5,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * Created by Suoemi on 3/17/2017.
@@ -28,6 +31,10 @@ public class BuyerProfile extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.buyer_prof);
+
+        databaseref = FirebaseDatabase.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
+        muser = mAuth.getCurrentUser();
 
         Button logoutbtn = (Button) findViewById(R.id.bplogout_btn);
         Button mainbtn = (Button) findViewById(R.id.bpmain_btn);
@@ -53,17 +60,30 @@ public class BuyerProfile extends AppCompatActivity {
 
         no_btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                AlertDialog.Builder builder2 = new AlertDialog.Builder(BuyerProfile.this);
-                builder2
-                        .setTitle("Change phone number?")
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                startActivity(new Intent(BuyerProfile.this, SellerInput.class));
+                LayoutInflater layoutInflaterAndroid = LayoutInflater.from(BuyerProfile.this);
+                View mView = layoutInflaterAndroid.inflate(R.layout.user_input, null);
+                AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(BuyerProfile.this);
+                alertDialogBuilderUserInput.setView(mView);
+
+                final EditText userInputDialogEditText = (EditText) mView.findViewById(R.id.userInputDialog);
+                alertDialogBuilderUserInput
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogBox, int id) {
+                                // ToDo get user input here
+                                databaseref.child("ev drivers").child(muser.getUid()).child("phone number").setValue(userInputDialogEditText.getText().toString());
                             }
                         })
-                        .setNegativeButton("No", null)                        //Do nothing on no
-                        .show();
+
+                        .setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialogBox, int id) {
+                                        dialogBox.cancel();
+                                    }
+                                });
+
+                AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
+                alertDialogAndroid.show();
             }
         });
 
@@ -75,15 +95,38 @@ public class BuyerProfile extends AppCompatActivity {
 
         pass_btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent mIntent = new Intent(BuyerProfile.this, BuyerMain.class);
+                Intent mIntent = new Intent(BuyerProfile.this, SignupActivity.class);
                 startActivity(mIntent);
             }
         });
 
         usr_btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent mIntent = new Intent(BuyerProfile.this, BuyerMain.class);
-                startActivity(mIntent);
+                LayoutInflater layoutInflaterAndroid = LayoutInflater.from(BuyerProfile.this);
+                View mView = layoutInflaterAndroid.inflate(R.layout.user_input, null);
+                AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(BuyerProfile.this);
+                alertDialogBuilderUserInput.setView(mView);
+
+                final EditText userInputDialogEditText = (EditText) mView.findViewById(R.id.userInputDialog);
+                alertDialogBuilderUserInput
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogBox, int id) {
+                                // ToDo get user input here
+                                String getusr = userInputDialogEditText.getText().toString();
+                                databaseref.child("ev drivers").child(muser.getUid()).child("username").setValue(userInputDialogEditText.getText().toString());
+                            }
+                        })
+
+                        .setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialogBox, int id) {
+                                        dialogBox.cancel();
+                                    }
+                                });
+
+                AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
+                alertDialogAndroid.show();
             }
         });
 

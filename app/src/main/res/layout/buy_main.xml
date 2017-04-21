@@ -72,7 +72,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/textView15"
                 android:layout_centerHorizontal="true"
-                android:id="@+id/benterloc" />
+                android:id="@+id/benterloc"
+                android:hint="Click To Enter Location" />
 
             <Button
                 android:text="Begin"
